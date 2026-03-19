@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>India's Farm Data Cold Start — The Context Window</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #0b0b0d;
+      --bg2:       #111115;
+      --bg3:       #18181e;
+      --border:    #252530;
+      --text:      #f0ede8;
+      --muted:     #7a7880;
+      --accent:    #e8c97a;
+      --accent-dim:#a68d50;
+      --serif:     'DM Serif Display', Georgia, serif;
+      --sans:      'DM Sans', sans-serif;
+      --mono:      'DM Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+      font-weight: 300;
+      min-height: 100vh;
+    }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 48px;
+      height: 64px;
+      background: rgba(11,11,13,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 18px;
+      color: var(--text);
+      letter-spacing: 0.01em;
+    }
+
+    .nav-back {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-back:hover { color: var(--text); }
+
+    .article-wrapper {
+      padding-top: 64px;
+      max-width: 720px;
+      margin: 0 auto;
+      padding-left: 48px;
+      padding-right: 48px;
+    }
+
+    .article-header {
+      padding: 80px 0 60px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 64px;
+      animation: fadeUp 0.5s ease forwards;
+    }
+
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .article-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent-dim);
+      padding: 4px 10px;
+    }
+
+    .article-date {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    .article-title {
+      font-family: var(--serif);
+      font-size: clamp(36px, 5vw, 56px);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+
+    .article-subtitle {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 22px;
+      color: var(--accent);
+      line-height: 1.4;
+      margin-bottom: 40px;
+    }
+
+    .article-byline {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .article-byline strong {
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    .article-body {
+      padding-bottom: 100px;
+      animation: fadeUp 0.5s 0.1s ease forwards;
+      opacity: 0;
+    }
+
+    .article-body p {
+      font-size: 17px;
+      line-height: 1.85;
+      color: #c8c5be;
+      margin-bottom: 28px;
+    }
+
+    .article-body p:first-child {
+      font-size: 19px;
+      color: #dedad3;
+      line-height: 1.8;
+    }
+
+    .article-body h2 {
+      font-family: var(--serif);
+      font-size: 30px;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      margin: 64px 0 24px;
+      line-height: 1.2;
+    }
+
+    .article-body h3 {
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 48px 0 16px;
+    }
+
+    .article-body strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .article-body em {
+      font-style: italic;
+      color: #dedad3;
+    }
+
+    .article-body hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 56px 0;
+    }
+
+    .article-body blockquote {
+      border-left: 2px solid var(--accent);
+      margin: 48px 0;
+      padding: 4px 0 4px 32px;
+    }
+
+    .article-body blockquote p {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-style: italic;
+      color: var(--text);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .article-sources {
+      border-top: 1px solid var(--border);
+      padding: 40px 0;
+      margin-top: 80px;
+    }
+
+    .article-sources p {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.8;
+      margin: 0;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer p { font-size: 12px; color: var(--muted); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 24px; }
+      .article-wrapper { padding-left: 24px; padding-right: 24px; }
+      .article-header { padding: 48px 0 40px; }
+      footer { flex-direction: column; gap: 12px; text-align: center; padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">The Context Window</span>
+  <a href="index.html" class="nav-back">← All articles</a>
+</nav>
+
+<div class="article-wrapper">
+  <header class="article-header">
+    <div class="article-meta">
+      <span class="article-tag">Analysis</span>
+      <span class="article-date">Mar 2026</span>
+    </div>
+    <h1 class="article-title">India's Farm Data Cold Start</h1>
+    <p class="article-subtitle">The country that feeds a billion people runs on almost no structured data. That is about to change, and the window to invest ahead of it is narrow.</p>
+    <p class="article-byline">By <strong>Arjun Chatterjee</strong></p>
+  </header>
+
+  <div class="article-body">
+
+    <p>There is a pattern in India's most consequential technology markets. A sector operates for decades on informal relationships, paper records, and institutional inertia. Then a piece of digital public infrastructure gets switched on — Aadhaar, UPI, GST Network — and the data substrate that private markets were waiting for suddenly exists. What follows is not incremental improvement. It is a category-level reshaping of what is investable.</p>
+
+    <p>India's agriculture sector is at the beginning of that transition right now. The government just switched on the infrastructure. The private market has not yet caught up.</p>
+
+    <p>For an Indian, there is something that feels almost too close to home about this sector. Food in India is not just sustenance or commodity. It is how regions announce themselves: the rice of the Kaveri delta, the wheat of the Punjab plains, the turmeric of Marathwada. Agriculture is the connective tissue between Indian identity and Indian land in a way that has no real equivalent in any other major economy. Writing about it as an investment thesis feels, at moments, like it requires a different kind of accountability than writing about, say, B2B SaaS.</p>
+
+    <hr>
+
+    <h2>The Scale of the Problem Is the Thesis</h2>
+
+    <p>Start with the numbers McKinsey used in its June 2025 report on Indian agriculture. India's agriculture sector is currently valued at between $580 billion and $650 billion and is growing at 5% per annum. McKinsey's analysis of 40 agricultural sub-segments reveals a combined revenue pool of $533 billion and a profit pool of $42 billion, with downstream processing and trade presenting the largest single opportunity at nearly $30 billion in profits.</p>
+
+    <p>This is not a marginal sector. It is one of the largest economic activities on earth, and it operates with almost no structured data.</p>
+
+    <p>Over 86% of Indian farmers cultivate less than five acres and the average holding has fallen to 2.7 acres, while the sector employs nearly half the national workforce but contributes only around 16–18% of GDP. That productivity gap is not simply a story of inefficiency. It is a story of invisibility. A smallholder farmer in Vidarbha has no credit history, no digital crop record, no soil profile that any financial institution can read. Without data, there is no credit, no insurance pricing, no yield advisory, no input recommendation worth trusting. The absence of structured data is not a downstream consequence of agricultural underdevelopment. It is the upstream cause of it.</p>
+
+    <blockquote><p>The absence of structured data is not a downstream consequence of agricultural underdevelopment. It is the upstream cause of it.</p></blockquote>
+
+    <p>McKinsey's own 2024 Global Farmer Insights survey found that precision agriculture hardware adoption in India sits at approximately 5% — the lowest of any major agricultural economy surveyed, compared with roughly 51% in the United States and around 30% for Brazil and the EU. That adoption gap is partly about cost and connectivity. But it is primarily about the absence of a data layer that would make precision tools useful in the first place. You cannot build a recommendation engine on top of nothing.</p>
+
+    <hr>
+
+    <h2>The NPCI Moment for Agriculture</h2>
+
+    <p>Anyone who invested in Indian fintech between 2015 and 2020 benefited from a structural tailwind that was not obvious in advance: the government had built the pipes. Aadhaar provided identity, UPI provided payment rails, and the account aggregator framework provided consent-based data portability. The private market built on top of that infrastructure and generated some of India's most durable venture returns.</p>
+
+    <p>In September 2024, the Government of India approved the Digital Agriculture Mission with an allocation of ₹2,817 crore, accelerating digital transformation through a national AgriStack — a federated farmers' database designed to unify information on land, crops, weather, soil, and water resources. This is the NPCI moment for agriculture, and the parallel is precise enough to take seriously.</p>
+
+    <p>The architecture of AgriStack has three components. The Farmers' Registry acts as a trusted digital identity for cultivators, recording demographics, land holdings, and cropping details. The Geo-Referenced Village Maps connect those identities to plot-level spatial data. The Crop Sown Registry, built from annual mobile-based ground surveys, tracks what is grown and where. Stacked together, these three databases will create, for the first time, a machine-readable picture of Indian smallholder agriculture at national scale.</p>
+
+    <p>The execution is already underway. As of mid-August 2025, the government had issued 70 million Farmer IDs, and seed funding of approximately $300 million had been secured for the program. The government has set a target of 110 million digital Farmer IDs by 2026–27, with a pan-India rollout of the Digital Crop Survey across all states and Union Territories planned from Kharif 2025.</p>
+
+    <p>To appreciate what this means in practice: in Maharashtra alone, the government used Aadhaar-linked AgriStack data to transfer more than ₹14,000 crore to 8.9 million farmers as direct benefit payments — demonstrating that the identity and land record layers are functional, not theoretical. The same infrastructure that enabled that payment transfer also generates the data substrate on which private AI applications can be built.</p>
+
+    <blockquote><p>This is the NPCI moment for agriculture. The private market buildout is the next chapter.</p></blockquote>
+
+    <p>Mark Kahn at Omnivore, India's most experienced agritech investor, has made this analogy explicitly. Omnivore's portfolio companies are collectively involved with over 12 million smallholder farmers and have created $3.1 billion of economic value — and Kahn has argued that real scale in agritech will only be unlocked with the kind of digital public infrastructure that transformed fintech through NPCI. That infrastructure now exists.</p>
+
+    <hr>
+
+    <h2>Why the Previous Wave Failed to Compound</h2>
+
+    <p>Understanding where capital went wrong in the last cycle matters for sizing the current opportunity correctly.</p>
+
+    <p>The boom years of Indian agritech were primarily about B2B marketplaces and farm-sourced eGrocery, with investment takeoff beginning around 2017, peaking in 2021, and then dropping sharply through 2023. Kahn describes the pattern with characteristic directness: investment soared from just $1.3 million in 2019 to $2.4 billion in 2022, before falling 60% in 2023. The companies that failed in that correction shared a common characteristic: they were distribution businesses, not data businesses. They organized supply chains without owning the data that would make those supply chains defensible.</p>
+
+    <p>The correction separated winners from pretenders. The survivors share three traits: a focus on real profitability, integration of financial services into their core model, and avoidance of endless GMV growth funded by bridge rounds. Arya.ag is the archetype — a post-harvest company that doesn't just move grain, but stores it, provides loans against inventory, and helps farmers time their sales. Storage plus credit plus commerce generates actual profit. When HSBC and DFC extended $30 million in debt to Arya.ag in early 2025, they were backing a proven model. DeHaat, India's largest farmer platform, posted ₹3,000 crore in revenue for FY25 with a valuation near ₹5,690 crore.</p>
+
+    <p>The lesson for the next wave is structural. The businesses that compounded were those that sat at the intersection of data, credit, and commerce — not pure logistics or pure marketplace plays. AI amplifies that intersection significantly.</p>
+
+    <hr>
+
+    <h2>Three Layers Where AI Can Now Build Defensibly</h2>
+
+    <h3>Precision advisory and crop intelligence</h3>
+
+    <p>The Krishi Decision Support System integrates remote sensing data on crops, soil, weather, and water resources into a comprehensive geospatial platform, creating a publicly accessible data layer that no private company could have assembled alone. AI startups can now build plot-level advisory systems on top of this infrastructure: soil-specific input recommendations, pest and disease early warning, harvest timing optimization. The data foundation is no longer the startup's problem to solve. The model and the distribution are.</p>
+
+    <h3>Credit and insurance underwriting</h3>
+
+    <p>This is the highest-value application. Agricultural credit grew more than 14% annually between 2022 and 2024, reaching $292 billion, and 37% of farmers are now covered under crop insurance schemes like PM Fasal Bima Yojana. Both numbers are growing, but underwriting accuracy remains poor because lenders and insurers are operating on thin or absent farm-level data. An AI underwriting layer that combines Farmer ID, land record, crop registry, and satellite imagery can price risk with a precision that was structurally impossible two years ago. The Kisan Credit Card scheme now serves over 77.5 million farmers and is expanding. Every incremental cardholder who gets a better credit line because an AI model read their soil profile is a direct expression of this thesis.</p>
+
+    <h3>Supply chain and market linkage</h3>
+
+    <p>India is the world's second-largest producer of rice, sugarcane, and wheat, and the fifth-largest producer of maize — yet its share of global agricultural exports remains around 2%, with most exports unprocessed. The gap between production scale and export sophistication is partly a quality standardization problem and partly a market linkage problem, both of which are AI-addressable. Computer vision quality grading, satellite-based harvest prediction for procurement planning, and AI-driven price discovery layered onto e-NAM and ONDC are all genuine opportunities where the data foundation now exists.</p>
+
+    <hr>
+
+    <h2>What the Fundable Company Looks Like</h2>
+
+    <p>The first Indian agritech unicorn will likely emerge in 2026, with Captain Fresh having filed confidentially for a $350–400 million IPO. That milestone will shift the narrative around the sector in ways that will attract capital at a pace that founders building now will benefit from. But the companies that will deserve that capital are not the ones replicating the marketplace model of the last cycle.</p>
+
+    <p>Mark Kahn at Omnivore is direct about this: India is one of the best markets in the world for venture, and its ability to reach IPO is dramatically faster than in the US or Europe, but only for companies that build toward real profitability and integrate financial services into their core. That framing is the right filter for evaluating AI agritech opportunities today.</p>
+
+    <p>The fundable company in this cycle will have three characteristics. First, it will use AgriStack as infrastructure rather than trying to build a competing data layer. Second, it will sell to enterprises, financial institutions, or governments rather than directly to individual farmers — the unit economics of B2F (business-to-farmer) remain structurally difficult at smallholder scale in India. Third, it will have a credit or insurance product embedded in its core architecture, not bolted on as an afterthought.</p>
+
+    <p>McKinsey's Global Farmer Insights survey found that 76% of Indian farmers anticipated higher profits over the next two years — the highest optimism of any country surveyed. That sentiment reflects real momentum: better input access, improving credit availability, and the beginning of data-driven advisory. The AI companies that can accelerate that trajectory, rather than simply observe it, are the ones worth backing.</p>
+
+    <p>The infrastructure has been built. The data is being generated. The window before this becomes consensus is short. And for those of us who grew up eating food that came from this land, tended by farmers who had no digital footprint and no financial safety net, there is something worth acknowledging in the fact that the technology now exists to change both of those things at once.</p>
+
+    <div class="article-sources">
+      <p><em>Sources:</em> McKinsey ("Value Creation in Indian Agriculture," June 2025; "Global Farmer Insights 2024," October 2024), Ministry of Agriculture and Farmers' Welfare / Press Information Bureau (Digital Agriculture Mission approvals and progress, 2024–2025), Omnivore (AgFunder News, Founder Thesis, AgTechNavigator interviews with Mark Kahn, 2024–2026), AMCHAM India / YES Bank ("How Technology is Redefining India's Food Production," 2025).</p>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 The Context Window</p>
+  <p>Built with GitHub Pages</p>
+</footer>
+
+</body>
+</html>
