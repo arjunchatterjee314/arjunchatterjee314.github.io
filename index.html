@@ -2,13 +2,676 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>My Website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Name — AI & Startups</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
   <style>
-    body { font-family: sans-serif; max-width: 700px; margin: 80px auto; padding: 0 20px; }
+    :root {
+      --bg:        #0b0b0d;
+      --bg2:       #111115;
+      --bg3:       #18181e;
+      --border:    #252530;
+      --text:      #f0ede8;
+      --muted:     #7a7880;
+      --accent:    #e8c97a;
+      --accent-dim:#a68d50;
+      --serif:     'DM Serif Display', Georgia, serif;
+      --sans:      'DM Sans', sans-serif;
+      --mono:      'DM Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+      font-weight: 300;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 48px;
+      height: 64px;
+      background: rgba(11,11,13,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 18px;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active { color: var(--text); }
+
+    .nav-links a.active::after {
+      content: '';
+      display: block;
+      height: 1px;
+      background: var(--accent);
+      margin-top: 2px;
+    }
+
+    /* ── PAGE SYSTEM ── */
+    .page { display: none; padding-top: 64px; min-height: 100vh; }
+    .page.active { display: block; }
+
+    /* ── HERO ── */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: calc(100vh - 64px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-left {
+      padding: 80px 64px 80px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-right: 1px solid var(--border);
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 28px;
+    }
+
+    .hero-name {
+      font-family: var(--serif);
+      font-size: clamp(52px, 6vw, 84px);
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 32px;
+    }
+
+    .hero-name em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-bio {
+      font-size: 17px;
+      line-height: 1.75;
+      color: #b5b2ac;
+      max-width: 440px;
+      margin-bottom: 48px;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 28px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0b0b0d;
+    }
+
+    .btn-primary:hover { background: #f0d88a; }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--text);
+      background: rgba(240,237,232,0.04);
+    }
+
+    .hero-right {
+      padding: 80px 48px 80px 64px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .hero-stat-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 40px;
+    }
+
+    .hero-topics {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .topic-row {
+      display: flex;
+      align-items: center;
+      padding: 20px 0;
+      border-top: 1px solid var(--border);
+      gap: 20px;
+      cursor: default;
+      transition: padding-left 0.2s;
+    }
+
+    .topic-row:hover { padding-left: 8px; }
+    .topic-row:last-child { border-bottom: 1px solid var(--border); }
+
+    .topic-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent-dim);
+      min-width: 24px;
+    }
+
+    .topic-name {
+      font-family: var(--serif);
+      font-size: 22px;
+      color: var(--text);
+    }
+
+    .topic-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: auto;
+      text-align: right;
+      max-width: 180px;
+    }
+
+    /* ── SECTION WRAPPER ── */
+    .section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 100px 48px;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: var(--serif);
+      font-size: clamp(36px, 4vw, 54px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 48px;
+    }
+
+    /* ── ABOUT PAGE ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .about-text p {
+      color: #b5b2ac;
+      margin-bottom: 20px;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .about-text p:first-child { font-size: 18px; color: var(--text); }
+
+    .about-sidebar { display: flex; flex-direction: column; gap: 40px; }
+
+    .sidebar-block { border-top: 1px solid var(--border); padding-top: 24px; }
+
+    .sidebar-block h4 {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .tag-list { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .tag {
+      font-size: 12px;
+      font-weight: 400;
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    .tag:hover { border-color: var(--accent-dim); color: var(--text); }
+
+    .stat-grid { display: flex; flex-direction: column; gap: 16px; }
+
+    .stat-item { display: flex; justify-content: space-between; align-items: baseline; }
+
+    .stat-val {
+      font-family: var(--serif);
+      font-size: 32px;
+      color: var(--text);
+    }
+
+    .stat-name {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* ── RESEARCH PAGE ── */
+    .research-intro {
+      font-size: 18px;
+      color: #b5b2ac;
+      max-width: 640px;
+      margin-bottom: 64px;
+      line-height: 1.75;
+    }
+
+    .article-list { display: flex; flex-direction: column; gap: 0; }
+
+    .article-item {
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      gap: 32px;
+      align-items: start;
+      padding: 36px 0;
+      border-top: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .article-item:last-child { border-bottom: 1px solid var(--border); }
+    .article-item:hover { background: rgba(255,255,255,0.02); margin: 0 -24px; padding: 36px 24px; }
+
+    .article-date {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      padding-top: 6px;
+    }
+
+    .article-body h3 {
+      font-family: var(--serif);
+      font-size: 22px;
+      color: var(--text);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .article-body p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 520px;
+    }
+
+    .article-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-dim);
+      padding-top: 6px;
+      white-space: nowrap;
+    }
+
+    /* ── CONTACT PAGE ── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .contact-left p {
+      color: #b5b2ac;
+      margin-bottom: 40px;
+      font-size: 17px;
+      line-height: 1.8;
+    }
+
+    .contact-links { display: flex; flex-direction: column; gap: 0; }
+
+    .contact-link {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 0;
+      border-top: 1px solid var(--border);
+      text-decoration: none;
+      color: var(--text);
+      transition: padding-left 0.2s;
+    }
+
+    .contact-link:last-child { border-bottom: 1px solid var(--border); }
+    .contact-link:hover { padding-left: 8px; }
+
+    .contact-link-name { font-family: var(--serif); font-size: 20px; }
+    .contact-link-handle { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+    .contact-form { display: flex; flex-direction: column; gap: 24px; }
+
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+
+    .form-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .form-input,
+    .form-textarea {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 300;
+      padding: 14px 18px;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+      resize: none;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus { border-color: var(--accent-dim); }
+
+    .form-input::placeholder,
+    .form-textarea::placeholder { color: var(--muted); opacity: 0.5; }
+
+    .form-textarea { min-height: 140px; }
+
+    .form-submit {
+      align-self: flex-start;
+      background: var(--accent);
+      color: #0b0b0d;
+      border: none;
+      padding: 13px 32px;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .form-submit:hover { background: #f0d88a; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer p { font-size: 12px; color: var(--muted); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .page.active .hero-eyebrow { animation: fadeUp 0.5s ease forwards; }
+    .page.active .hero-name    { animation: fadeUp 0.5s 0.1s ease forwards; opacity: 0; }
+    .page.active .hero-bio     { animation: fadeUp 0.5s 0.2s ease forwards; opacity: 0; }
+    .page.active .hero-cta     { animation: fadeUp 0.5s 0.3s ease forwards; opacity: 0; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 24px; }
+      .nav-links { gap: 20px; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-left { padding: 60px 24px; border-right: none; border-bottom: 1px solid var(--border); }
+      .hero-right { padding: 40px 24px; }
+      .section { padding: 60px 24px; }
+      .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+      .article-item { grid-template-columns: 1fr; gap: 8px; }
+      footer { flex-direction: column; gap: 12px; text-align: center; padding: 32px 24px; }
+    }
   </style>
 </head>
 <body>
-  <h1>Hi, I'm [Your Name]</h1>
-  <p>Welcome to my personal site.</p>
-</body>
+
+<nav>
+  <a href="#" class="nav-logo" onclick="showPage('about')">Arjun Chatterjee</a>
+  <ul class="nav-links">
+    <li><a href="#" onclick="showPage('about')" id="nav-about" class="active">About</a></li>
+    <li><a href="#" onclick="showPage('research')" id="nav-research">Research</a></li>
+    <li><a href="#" onclick="showPage('contact')" id="nav-contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ══ ABOUT PAGE ══ -->
+<div class="page active" id="page-about">
+  <div class="hero">
+    <div class="hero-left">
+      <p class="hero-eyebrow">Writer &amp; Analyst</p>
+      <h1 class="hero-name">Your<br><em>Name</em></h1>
+      <p class="hero-bio">I write about the people, ideas, and capital reshaping artificial intelligence — from seed-stage bets to the startups defining the next decade of tech.</p>
+      <div class="hero-cta">
+        <a href="#" class="btn btn-primary" onclick="showPage('research')">Read my work</a>
+        <a href="#" class="btn btn-ghost" onclick="showPage('contact')">Get in touch</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <p class="hero-stat-label">Topics I cover</p>
+      <div class="hero-topics">
+        <div class="topic-row">
+          <span class="topic-num">01</span>
+          <span class="topic-name">Venture &amp; Funding</span>
+          <span class="topic-desc">Rounds, valuations, investor theses</span>
+        </div>
+        <div class="topic-row">
+          <span class="topic-num">02</span>
+          <span class="topic-name">Founders &amp; Teams</span>
+          <span class="topic-desc">Origin stories, culture, vision</span>
+        </div>
+        <div class="topic-row">
+          <span class="topic-num">03</span>
+          <span class="topic-name">AI Infrastructure</span>
+          <span class="topic-desc">Models, tooling, compute</span>
+        </div>
+        <div class="topic-row">
+          <span class="topic-num">04</span>
+          <span class="topic-name">Market Analysis</span>
+          <span class="topic-desc">Trends, disruption, competition</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <p class="section-label">About me</p>
+    <h2 class="section-title">Covering AI from the<br>inside out</h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>I'm a writer focused on the intersection of artificial intelligence and startup culture. I believe the most interesting stories in tech right now aren't about the models — they're about the humans building with them.</p>
+        <p>My work digs into funding rounds and what they signal, the strategic bets founders are making, and the quiet infrastructure companies that rarely make headlines but underpin everything.</p>
+        <p>Before writing, I spent time in [your background here]. That experience informs how I read pitch decks, interpret investor moves, and talk to founders.</p>
+        <p>I publish regularly and am always open to tips, corrections, and conversations.</p>
+      </div>
+      <div class="about-sidebar">
+        <div class="sidebar-block">
+          <h4>Topics</h4>
+          <div class="tag-list">
+            <span class="tag">Generative AI</span>
+            <span class="tag">Venture Capital</span>
+            <span class="tag">LLMs</span>
+            <span class="tag">AI Agents</span>
+            <span class="tag">Startups</span>
+            <span class="tag">Infrastructure</span>
+            <span class="tag">Founders</span>
+            <span class="tag">Policy</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <footer>
+    <p>© 2026 Your Name</p>
+    <p>Built with GitHub Pages</p>
+  </footer>
+</div>
+
+<!-- ══ RESEARCH PAGE ══ -->
+<div class="page" id="page-research">
+  <div class="section">
+    <p class="section-label">Writing</p>
+    <h2 class="section-title">Research &amp; Articles</h2>
+    <p class="research-intro">In-depth analysis of the companies, capital, and ideas shaping artificial intelligence. Updated regularly.</p>
+
+    <div class="article-list">
+      <div class="article-item">
+        <span class="article-date">Mar 2026</span>
+        <div class="article-body">
+          <h3>The $10B Bet: Why Investors Are Doubling Down on AI Agents</h3>
+          <p>A deep look at the agent layer — why it's attracting so much capital, which startups are pulling ahead, and what a sustainable business model actually looks like here.</p>
+        </div>
+        <span class="article-tag">Analysis</span>
+      </div>
+      <div class="article-item">
+        <span class="article-date">Feb 2026</span>
+        <div class="article-body">
+          <h3>Quiet Giants: The Infrastructure Startups Nobody Talks About</h3>
+          <p>Behind every flashy AI product is a stack of boring, critical infrastructure. These are the companies building it — and why they're quietly worth billions.</p>
+        </div>
+        <span class="article-tag">Profile</span>
+      </div>
+      <div class="article-item">
+        <span class="article-date">Jan 2026</span>
+        <div class="article-body">
+          <h3>Founder Mode in the Age of LLMs</h3>
+          <p>What does it mean to lead an AI startup when the competitive landscape shifts every 90 days? Conversations with eight founders navigating permanent uncertainty.</p>
+        </div>
+        <span class="article-tag">Interviews</span>
+      </div>
+      <div class="article-item">
+        <span class="article-date">Dec 2025</span>
+        <div class="article-body">
+          <h3>How Seed Valuations Got Unhinged (And What Happens Next)</h3>
+          <p>AI seed rounds have hit levels that would've been Series B territory three years ago. Tracking where the froth is, and where the value might actually be.</p>
+        </div>
+        <span class="article-tag">Venture</span>
+      </div>
+      <div class="article-item">
+        <span class="article-date">Nov 2025</span>
+        <div class="article-body">
+          <h3>The Verticalization Wave: AI's Next Big Unlock</h3>
+          <p>General-purpose models are maturing. The opportunity now is vertical — narrowly focused AI products for specific industries. Here's who's doing it right.</p>
+        </div>
+        <span class="article-tag">Analysis</span>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <p>© 2026 Your Name</p>
+    <p>Built with GitHub Pages</p>
+  </footer>
+</div>
+
+<!-- ══ CONTACT PAGE ══ -->
+<div class="page" id="page-contact">
+  <div class="section">
+    <p class="section-label">Get in touch</p>
+    <h2 class="section-title">Let's talk</h2>
+    <div>
+      <div class="contact-left">
+        <p>I'm always open to tips, story ideas, founder pitches, and thoughtful pushback. If you're building something in AI and want to share your story, reach out.</p>
+        <div class="contact-links">
+          <a href="https://linkedin.com" class="contact-link" target="_blank">
+            <span class="contact-link-name">LinkedIn</span>
+            <span class="contact-link-handle">yourname</span>
+          </a>
+          <a href="mailto:arjunchatterjee314@gmail.com" class="contact-link">
+            <span class="contact-link-name">Email</span>
+            <span class="contact-link-handle">arjunchatterjee314@gmail.com</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <footer>
+    <p>© 2026 Your Name</p>
+    <p>Built with GitHub Pages</p>
+  </footer>
+</div>
+
+<script>
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    document.getElementById('nav-' + name).classList.add('active');
+    window.scrollTo(0, 0);
+    return false;
+  }
+
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', e => e.preventDefault());
+  });
+</script></body>
 </html>
