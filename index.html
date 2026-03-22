@@ -490,6 +490,126 @@
       .article-item { grid-template-columns: 1fr; gap: 8px; }
       footer { flex-direction: column; gap: 12px; text-align: center; padding: 32px 24px; }
     }
+    /* ── CV PAGE ── */
+    .cv-wrapper {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 80px 0 120px;
+    }
+    
+    .cv-header {
+      padding-bottom: 56px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 56px;
+    }
+    
+    .cv-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    
+    .cv-title {
+      font-family: var(--serif);
+      font-size: clamp(36px, 5vw, 52px);
+      letter-spacing: -0.02em;
+      line-height: 1.08;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+    
+    .cv-subtitle {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 19px;
+      color: var(--accent);
+      line-height: 1.5;
+      max-width: 560px;
+    }
+    
+    .cv-section {
+      margin-bottom: 52px;
+    }
+    
+    .cv-section-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    
+    .cv-entry {
+      margin-bottom: 32px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .cv-entry:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    
+    .cv-entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 24px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    
+    .cv-entry-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+    }
+    
+    .cv-entry-meta {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    
+    .cv-body {
+      font-size: 15px;
+      line-height: 1.85;
+      color: #c8c5be;
+      margin-bottom: 16px;
+    }
+    
+    .cv-body:last-child { margin-bottom: 0; }
+    
+    .cv-interests {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      color: var(--accent-dim);
+      line-height: 2;
+    }
+    
+    .cv-download {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent-dim);
+      padding: 12px 24px;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+    }
+    
+    .cv-download:hover {
+      background: var(--accent);
+      color: var(--bg);
+    }
   </style>
 </head>
 <body>
@@ -499,6 +619,7 @@
   <ul class="nav-links">
     <li><a href="#" onclick="showPage('about')" id="nav-about" class="active">About</a></li>
     <li><a href="#" onclick="showPage('research')" id="nav-research">Research</a></li>
+    <li><a href="#" onclick="showPage('cv')" id="nav-cv">CV</a></li>
     <li><a href="#" onclick="showPage('contact')" id="nav-contact">Contact</a></li>
   </ul>
 </nav>
@@ -628,7 +749,80 @@
     <p>Built with GitHub Pages</p>
   </footer>
 </div>
+<div class="page" id="page-cv">
+  <div class="cv-wrapper">
 
+    <div class="cv-header">
+      <p class="cv-tag">CV</p>
+      <h1 class="cv-title">Arjun Chatterjee</h1>
+      <p class="cv-subtitle">PhD researcher in deep learning and quantitative finance. Interested in technical diligence and investment research at an early-stage AI and deeptech fund.</p>
+    </div>
+
+    <div class="cv-section">
+      <p class="cv-section-label">About</p>
+      <p class="cv-body">Completing a PhD at the University of Bath on deep learning approaches to options pricing, supported by £150,000 in institutional scholarships. Research spans high-dimensional numerical methods, stochastic calculus, and machine learning model development and evaluation. Viva passed; degree award pending.</p>
+      <p class="cv-body">Previously MSc in Aeronautical Engineering at Imperial College London and BEng in Mechanical Engineering at Lancaster University.</p>
+    </div>
+
+    <div class="cv-section">
+      <p class="cv-section-label">Experience</p>
+      <div class="cv-entry">
+        <div class="cv-entry-header">
+          <span class="cv-entry-title">Teaching Assistant</span>
+          <span class="cv-entry-meta">University of Bath &nbsp;&middot;&nbsp; 2022–2024</span>
+        </div>
+        <p class="cv-body">Taught options pricing, derivatives, DCF, CAPM, and equity research at postgraduate level. Focused on translating complex technical and financial material into clear, structured analysis.</p>
+      </div>
+      <div class="cv-entry">
+        <div class="cv-entry-header">
+          <span class="cv-entry-title">Research Assistant</span>
+          <span class="cv-entry-meta">University of Bath &nbsp;&middot;&nbsp; Summer 2022</span>
+        </div>
+        <p class="cv-body">Synthesised findings from nearly 100 academic papers in operations research. Identified methodological patterns, limitations, and practical implications across a broad technical literature base.</p>
+      </div>
+    </div>
+
+    <div class="cv-section">
+      <p class="cv-section-label">Education</p>
+      <div class="cv-entry">
+        <div class="cv-entry-header">
+          <span class="cv-entry-title">PhD — Deep Learning Enhanced Options Pricing</span>
+          <span class="cv-entry-meta">University of Bath &nbsp;&middot;&nbsp; 2021–2026</span>
+        </div>
+        <p class="cv-body">£150,000 institutional scholarship. Viva passed; degree award pending.</p>
+      </div>
+      <div class="cv-entry">
+        <div class="cv-entry-header">
+          <span class="cv-entry-title">MSc — Advanced Aeronautical Engineering</span>
+          <span class="cv-entry-meta">Imperial College London &nbsp;&middot;&nbsp; 2019–2020</span>
+        </div>
+        <p class="cv-body">Merit with Distinction in Thesis.</p>
+      </div>
+      <div class="cv-entry">
+        <div class="cv-entry-header">
+          <span class="cv-entry-title">BEng — Mechanical Engineering</span>
+          <span class="cv-entry-meta">Lancaster University &nbsp;&middot;&nbsp; 2016–2019</span>
+        </div>
+        <p class="cv-body">First Class with Distinction in Thesis.</p>
+      </div>
+    </div>
+
+    <div class="cv-section">
+      <p class="cv-section-label">Technical Skills</p>
+      <p class="cv-body">Python (TensorFlow, PyTorch, NumPy), MATLAB, C++. Experience building and training deep learning models on HPC systems.</p>
+    </div>
+
+    <div class="cv-section">
+      <p class="cv-section-label">Investment Interests</p>
+      <p class="cv-interests">AI infrastructure &nbsp;&middot;&nbsp; Applied AI &nbsp;&middot;&nbsp; Fintech &nbsp;&middot;&nbsp; Quantitative systems &nbsp;&middot;&nbsp; Technical diligence for deeptech</p>
+    </div>
+
+    <div class="cv-section">
+      <a href="CV - Arjun Chatterjee.pdf" class="cv-download" download>Download Full CV &rarr;</a>
+    </div>
+
+  </div>
+</div>
 <!-- ══ CONTACT PAGE ══ -->
 <div class="page" id="page-contact">
   <div class="section">
