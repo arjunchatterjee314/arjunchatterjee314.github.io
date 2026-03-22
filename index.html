@@ -483,28 +483,28 @@
       nav { padding: 0 24px; }
       .nav-links { gap: 20px; }
       .hero { grid-template-columns: 1fr; }
-      .hero-left { padding: 60px 24px; border-right: none; border-bottom: 1px solid var(--border); }
+      .hero-left {
+        padding: 60px 24px;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
       .hero-right { padding: 40px 24px; }
       .section { padding: 60px 24px; }
       .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 48px; }
       .article-item { grid-template-columns: 1fr; gap: 8px; }
       footer { flex-direction: column; gap: 12px; text-align: center; padding: 32px 24px; }
-      .hero { grid-template-columns: 1fr; }
-      .hero-left {
-        padding: 60px 24px;
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-        align-items: center;
-        text-align: center;
-      }
-      .hero-right { padding: 40px 24px; }
     
-      .hero-eyebrow { text-align: center; }
+      .hero-eyebrow { text-align: center; width: 100%; }
     
       .hero-name-row {
         flex-direction: column;
         align-items: center;
-        gap: 20px;
+        justify-content: center;
+        gap: 24px;
         margin-bottom: 28px;
         width: 100%;
       }
@@ -512,25 +512,20 @@
       .hero-name {
         text-align: center;
         width: 100%;
+        margin-bottom: 0;
       }
     
       .about-photo {
         width: 160px;
         height: 190px;
-        margin-bottom: 0;
-        margin-left: auto;
-        margin-right: auto;
         display: block;
+        margin: 0 auto;
+        margin-bottom: 0 !important;
       }
     
-      .hero-bio { text-align: center; }
+      .hero-bio { text-align: center; width: 100%; }
     
       .hero-cta { justify-content: center; }
-    }
-    
-      .hero-name {
-        text-align: left;
-      }
     }
     /* ── CV PAGE ── */
     .cv-wrapper {
