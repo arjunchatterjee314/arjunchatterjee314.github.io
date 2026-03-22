@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maieutic Semiconductors: Deal Memo — The Context Window</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #0b0b0d;
+      --bg2:       #111115;
+      --bg3:       #18181e;
+      --border:    #252530;
+      --text:      #f0ede8;
+      --muted:     #7a7880;
+      --accent:    #e8c97a;
+      --accent-dim:#a68d50;
+      --serif:     'DM Serif Display', Georgia, serif;
+      --sans:      'DM Sans', sans-serif;
+      --mono:      'DM Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.7;
+      font-weight: 300;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 48px;
+      height: 64px;
+      background: rgba(11,11,13,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--serif);
+      font-size: 18px;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+    }
+
+    .nav-back {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .nav-back:hover { color: var(--text); }
+
+    /* ARTICLE LAYOUT */
+    .article-wrapper {
+      padding-top: 64px;
+      max-width: 760px;
+      margin: 0 auto;
+      padding-left: 48px;
+      padding-right: 48px;
+    }
+
+    /* HEADER */
+    .article-header {
+      padding: 80px 0 60px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 64px;
+    }
+
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .article-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent-dim);
+      padding: 4px 10px;
+    }
+
+    .article-date {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    .memo-doc-type {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      margin-bottom: 32px;
+    }
+
+    .article-title {
+      font-family: var(--serif);
+      font-size: clamp(36px, 5vw, 56px);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+
+    .article-subtitle {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 20px;
+      color: var(--accent);
+      line-height: 1.45;
+      margin-bottom: 40px;
+    }
+
+    .article-byline {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .article-byline strong {
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    /* BODY */
+    .article-body {
+      padding-bottom: 100px;
+    }
+
+    .article-body > p {
+      font-size: 17px;
+      line-height: 1.85;
+      color: #c8c5be;
+      margin-bottom: 28px;
+    }
+
+    .article-body h2 {
+      font-family: var(--serif);
+      font-size: 30px;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      margin: 16px 0 28px;
+      line-height: 1.2;
+    }
+
+    .article-body h3 {
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 52px 0 18px;
+    }
+
+    .article-body strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .article-body em {
+      font-style: italic;
+      color: #dedad3;
+    }
+
+    .article-body hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 64px 0;
+    }
+
+    .article-body blockquote {
+      border-left: 2px solid var(--accent);
+      margin: 48px 0;
+      padding: 4px 0 4px 32px;
+    }
+
+    .article-body blockquote p {
+      font-family: var(--serif);
+      font-size: 22px !important;
+      font-style: italic;
+      color: var(--text) !important;
+      line-height: 1.5 !important;
+      margin: 0 !important;
+    }
+
+    /* MEMO: PART LABEL */
+    .memo-part-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent-dim);
+      margin-top: 80px;
+      margin-bottom: 10px;
+    }
+
+    /* MEMO: TABLES */
+    .memo-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 28px 0 48px;
+    }
+
+    .memo-table tr {
+      border-top: 1px solid var(--border);
+    }
+
+    .memo-table tr:last-child {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .memo-table td {
+      padding: 15px 8px 15px 0;
+      font-size: 14px;
+      line-height: 1.7;
+      vertical-align: top;
+      color: #c8c5be;
+    }
+
+    .memo-table-key {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      text-transform: uppercase;
+      width: 210px;
+      min-width: 160px;
+      padding-right: 28px;
+      padding-top: 18px;
+    }
+
+    /* MEMO: CALLOUT BOXES */
+    .memo-callout {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-dim);
+      padding: 28px 32px;
+      margin: 48px 0;
+    }
+
+    .memo-callout-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+
+    .memo-callout p {
+      font-size: 15px !important;
+      color: #b5b2ac !important;
+      line-height: 1.8 !important;
+      margin-bottom: 12px !important;
+    }
+
+    .memo-callout p:last-child { margin-bottom: 0 !important; }
+    .memo-callout strong { color: var(--text) !important; }
+
+    .memo-callout-risk { border-left-color: #7a3535; }
+    .memo-callout-risk .memo-callout-label { color: #b07070 !important; }
+
+    .memo-callout-mitigant { border-left-color: var(--accent-dim); }
+    .memo-callout-mitigant .memo-callout-label { color: var(--accent-dim) !important; }
+
+    /* MEMO: COMPANY DESCRIPTION BOX */
+    .memo-description-box {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 36px;
+      margin: 32px 0 52px;
+    }
+
+    .memo-description-box .memo-description-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .memo-description-box p {
+      font-size: 16px !important;
+      color: #c8c5be !important;
+      line-height: 1.85 !important;
+      margin-bottom: 0 !important;
+    }
+
+    .memo-oneliner {
+      border-top: 1px solid var(--border);
+      padding-top: 22px;
+      margin-top: 24px;
+    }
+
+    .memo-oneliner-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    /* MEMO: FOUNDER ENTRIES */
+    .founder-entry {
+      padding-top: 32px;
+      margin-top: 36px;
+      border-top: 1px solid var(--border);
+    }
+
+    .founder-entry:first-of-type {
+      margin-top: 0;
+    }
+
+    .founder-name {
+      font-family: var(--serif) !important;
+      font-size: 22px !important;
+      color: var(--text) !important;
+      line-height: 1.2 !important;
+      margin-bottom: 4px !important;
+      font-weight: normal;
+    }
+
+    .founder-role {
+      font-family: var(--mono) !important;
+      font-size: 10px !important;
+      letter-spacing: 0.12em !important;
+      text-transform: uppercase !important;
+      color: var(--accent-dim) !important;
+      margin-bottom: 20px !important;
+      line-height: 1.4 !important;
+    }
+
+    .founder-entry p {
+      font-size: 16px;
+      line-height: 1.85;
+      color: #c8c5be;
+      margin-bottom: 20px;
+    }
+
+    .founder-entry p:last-child { margin-bottom: 0; }
+
+    /* MEMO: COMPETITOR ENTRIES */
+    .competitor-entry {
+      padding-top: 32px;
+      margin-top: 36px;
+      border-top: 1px solid var(--border);
+    }
+
+    .competitor-name {
+      font-family: var(--serif);
+      font-size: 22px;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+
+    .competitor-meta {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .competitor-entry p {
+      font-size: 16px;
+      line-height: 1.85;
+      color: #c8c5be;
+      margin-bottom: 20px;
+    }
+
+    .competitor-entry p:last-child { margin-bottom: 0; }
+
+    /* MEMO: RISK HEADINGS */
+    .risk-heading {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin: 64px 0 20px;
+      flex-wrap: wrap;
+    }
+
+    .risk-heading-text {
+      font-size: 16px;
+      color: var(--text);
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .severity-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .severity-high        { color: #c08080; border: 1px solid #7a3535; }
+    .severity-med-high    { color: #c0a070; border: 1px solid #7a5a30; }
+    .severity-medium      { color: var(--muted); border: 1px solid var(--border); }
+    .severity-low         { color: var(--accent-dim); border: 1px solid var(--accent-dim); }
+
+    .risk-body p {
+      font-size: 16px !important;
+      line-height: 1.85 !important;
+      color: #c8c5be !important;
+      margin-bottom: 20px !important;
+    }
+
+    .risk-body p:last-child { margin-bottom: 0 !important; }
+
+    /* MEMO: RECOMMENDATION BOX */
+    .memo-recommendation {
+      background: var(--bg2);
+      border: 1px solid var(--accent-dim);
+      padding: 52px 40px;
+      margin: 36px 0 56px;
+      text-align: center;
+    }
+
+    .memo-rec-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .memo-rec-verdict {
+      font-family: var(--serif);
+      font-size: 52px;
+      color: var(--accent);
+      letter-spacing: -0.01em;
+      line-height: 1.0;
+      margin-bottom: 16px;
+    }
+
+    .memo-rec-sub {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    /* MEMO: PREPARED BY FOOTER */
+    .memo-prepared {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 28px 32px;
+      margin: 72px 0 48px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .memo-prepared-item label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .memo-prepared-item span {
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    /* MEMO: REFERENCES */
+    .memo-references {
+      border-top: 1px solid var(--border);
+      padding-top: 40px;
+      margin-top: 16px;
+    }
+
+    .memo-references-title {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .memo-references-note {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 32px;
+      line-height: 1.75;
+    }
+
+    .memo-ref-item {
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 16px;
+      padding: 13px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .memo-ref-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent-dim);
+      padding-top: 2px;
+    }
+
+    .memo-ref-text {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    /* GENERIC PROSE SECTION */
+    .prose-section p {
+      font-size: 17px;
+      line-height: 1.85;
+      color: #c8c5be;
+      margin-bottom: 28px;
+    }
+
+    .prose-section p:last-child { margin-bottom: 0; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer p { font-size: 12px; color: var(--muted); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .article-header { animation: fadeUp 0.5s ease forwards; }
+    .article-body   { animation: fadeUp 0.5s 0.1s ease forwards; opacity: 0; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 0 24px; }
+      .article-wrapper { padding-left: 24px; padding-right: 24px; }
+      .article-header { padding: 48px 0 40px; }
+      .memo-table-key { width: 130px; min-width: 110px; padding-right: 16px; font-size: 9px; }
+      .memo-prepared { grid-template-columns: 1fr; }
+      .risk-heading { flex-direction: column; gap: 10px; }
+      footer { flex-direction: column; gap: 12px; text-align: center; padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">The Context Window</span>
+  <a href="index.html" class="nav-back">&#8592; All articles</a>
+</nav>
+
+<div class="article-wrapper">
+
+  <header class="article-header">
+    <div class="article-meta">
+      <span class="article-tag">Deal Memo</span>
+      <span class="article-date">Mar 2026</span>
+    </div>
+    <p class="memo-doc-type">First Look Note &nbsp;&middot;&nbsp; Internal VC Document &nbsp;&middot;&nbsp; AI Space &nbsp;&middot;&nbsp; India Focus &nbsp;&middot;&nbsp; Seed Stage</p>
+    <h1 class="article-title">Maieutic Semiconductors</h1>
+    <p class="article-subtitle">An AI copilot for analog chip engineers that compresses weeks of highly specialised manual design work into days, automating the last major frontier that legacy Electronic Design Automation software has never solved.</p>
+    <p class="article-byline">By <strong>Arjun Chatterjee</strong> &nbsp;&middot;&nbsp; Bengaluru, Karnataka &nbsp;&middot;&nbsp; Prepared 21 March 2026</p>
+  </header>
+
+  <div class="article-body">
+
+    <!-- ═══════════════════════════════════════════ PART 01 -->
+    <span class="memo-part-label">Part 01</span>
+    <h2>Deal Snapshot</h2>
+
+    <table class="memo-table">
+      <tbody>
+        <tr>
+          <td class="memo-table-key">Company Name</td>
+          <td>Maieutic Semiconductors Private Limited (trading as Maieutic Semiconductor)<sup>[1]</sup></td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Website</td>
+          <td>www.maieuticsemi.com</td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Date of First Contact</td>
+          <td>21 March 2026</td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Source</td>
+          <td>Inbound via press coverage (Nikkei Asia, Inc42, Economic Times)</td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Founder(s)</td>
+          <td>Gireesh Rajendran (Chief Executive Officer), Ashish Lachhwani (Chief Business Officer), Rakesh Kumar (Chief Product Officer), Krishna Sankar (Chief Technology Officer)<sup>[9]</sup></td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Stage</td>
+          <td>Seed (closed)</td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Round Size</td>
+          <td>USD 6.0 million total (USD 4.15 million first close, July 2025; USD 1.85 million follow-on from University of Tokyo Edge Capital Partners, October 2025)<sup>[2][3]</sup></td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Pre-Money Valuation</td>
+          <td>Not publicly disclosed</td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Instrument</td>
+          <td>Not publicly disclosed. Compulsorily Convertible Preference Shares assumed, consistent with standard practice for Indian seed-stage rounds.</td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Lead Investor</td>
+          <td>University of Tokyo Edge Capital Partners (UTEC); participating investors: Endiya Partners, Exfinity Venture Partners<sup>[3]</sup></td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Amount Already Committed</td>
+          <td>USD 6.0 million. Round fully closed as of October 2025.</td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Closing Timeline</td>
+          <td>Closed October 2025</td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Analyst / Sourcer</td>
+          <td>Arjun Chatterjee</td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Deal Status</td>
+          <td>First Look</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="memo-callout">
+      <span class="memo-callout-label">Analyst Note</span>
+      <p>University of Tokyo Edge Capital Partners has characterised this as potentially the first investment by a Japanese venture capital firm into an Indian semiconductor startup. This cross-border institutional validation is notable and uncommon at the seed stage. It reflects both the quality of the founding team and the global applicability of the problem being solved.<sup>[3]</sup></p>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════ PART 02 -->
+    <span class="memo-part-label">Part 02</span>
+    <h2>What Does the Company Do?</h2>
+
+    <div class="memo-description-box">
+      <span class="memo-description-label">Company Description</span>
+      <p>Maieutic Semiconductor is a business-to-business deep technology company that automates the early-stage design process for analog and mixed-signal integrated circuits, one of the most technically demanding and manually intensive workflows in the global semiconductor industry. The company's product is an artificial intelligence copilot that integrates directly into the toolchains that chip engineers already use. It interprets design specifications and simulation outputs in natural language, proposes circuit architectures, analyses trade-offs between power consumption and performance, and automatically flags design inconsistencies before they propagate downstream. Maieutic was incorporated in March 2025 and is headquartered in Bengaluru, Karnataka.<sup>[3]</sup></p>
+      <div class="memo-oneliner">
+        <span class="memo-oneliner-label">One-Line Pitch</span>
+        <p>An artificial intelligence copilot for analog chip engineers that compresses weeks of highly specialised manual design work into days, automating the last major frontier that legacy Electronic Design Automation software has never solved.</p>
+      </div>
+    </div>
+
+    <h3>2.1 The Problem</h3>
+
+    <div class="prose-section">
+      <p>The global Electronic Design Automation (EDA) industry has spent several decades automating the design of digital chips. Tools from incumbents such as Synopsys, Cadence Design Systems, and Siemens EDA now handle the large majority of that workflow with high reliability. The design of analog and mixed-signal chips, however, has remained almost entirely manual and has not meaningfully benefited from this automation wave.<sup>[3]</sup></p>
+      <p>The distinction matters because analog chips process continuous real-world signals such as sound, light, temperature, and radio frequency, and must be hand-tuned at the transistor level to handle those signals accurately. This requires a depth of engineering intuition and accumulated experience that resists codification. There are no generalised rules that a conventional software tool can follow; each design is shaped by the tacit judgment of a senior engineer.</p>
+      <p>The commercial consequences are significant. Analog design is a structural bottleneck in the chip development process. The global supply of experienced analog engineers is limited and shrinking relative to demand, design cycles run between six and eighteen months on average, and an error identified late in the process typically requires an expensive re-spin that can cost several million dollars and delay a product by six months or more. The customers bearing this cost most acutely are global semiconductor companies and fabless chip design firms operating design centres in India, a cohort that has grown substantially as multinationals including Texas Instruments, Qualcomm, Intel, and Analog Devices have expanded their research and development presence across Bengaluru, Hyderabad, and Pune.<sup>[13]</sup></p>
+      <p>The problem has not persisted for lack of awareness or investment. It has persisted because analog design knowledge is tacit, heterogeneous, and deeply embedded in the experience of individual engineers. It could not be reduced to the deterministic rules that powered earlier generations of Electronic Design Automation software. What has changed is the arrival of large language models and domain-specific fine-tuning capability, which for the first time make it technically feasible to encode that expertise at scale and surface it through an interactive software interface.</p>
+    </div>
+
+    <h3>2.2 The Solution</h3>
+
+    <div class="prose-section">
+      <p>Maieutic's product is an artificial intelligence copilot for analog integrated circuit designers, delivered as software that integrates with the Electronic Design Automation environments that engineers already operate within. The system is built on a proprietary artificial intelligence model fine-tuned specifically on semiconductor design knowledge. The training corpus spans patents, peer-reviewed research papers, and domain-specific design know-how accumulated from the analog engineering process. This is not a generic large language model deployed with a prompt layer on top. The model has been customised for the analog design domain from the ground up.<sup>[3]</sup></p>
+      <p>In practice, an engineer can describe a design specification in natural language, or upload a circuit diagram or simulation output. The copilot interprets the input, proposes alternative circuit architectures, evaluates trade-offs between power efficiency and signal performance, and automatically reviews the design to surface inconsistencies before they reach simulation or tape-out. Maieutic estimates that its tool can reduce the affected portions of the analog design cycle by fifty to sixty-six percent.</p>
+      <p>The system can also be deployed locally on a customer's own infrastructure, which is a hard requirement for most chip companies given the extreme sensitivity of pre-production chip designs as intellectual property. The underlying technology stack includes PostgreSQL, Neo4j, and TensorFlow. As of March 2026, the product is entering its early customer trials phase, with a broader commercial rollout planned to follow. It is pre-general availability.<sup>[3][10]</sup></p>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════ PART 03 -->
+    <span class="memo-part-label">Part 03</span>
+    <h2>Team</h2>
+
+    <div class="prose-section">
+      <p>At seed stage, the team is the investment. This section is accordingly the most heavily weighted in this analysis.</p>
+    </div>
+
+    <h3>3.1 Founder Profiles</h3>
+
+    <div class="founder-entry">
+      <p class="founder-name">Gireesh Rajendran</p>
+      <p class="founder-role">Co-Founder and Chief Executive Officer</p>
+      <p>Gireesh is a repeat semiconductor founder with a verified exit to a Japanese strategic acquirer. He holds a Bachelor of Technology in Electronics and Communication Engineering from the College of Engineering, Trivandrum. He is a 2010 Massachusetts Institute of Technology Technology Review TR35 winner, one of the most recognised awards for innovators under 35 globally, and holds 50 issued patents across Radio Frequency and mixed-signal semiconductor design.<sup>[8][9]</sup></p>
+      <p>Prior to Maieutic, Gireesh co-founded Steradian Semiconductors, a millimetre-wave radar chip company, and served as its Chief Executive Officer from founding through to exit. Steradian was acquired by Renesas Electronics in October 2022 in an all-cash transaction valued at approximately USD 41 million.<sup>[6][7]</sup> He previously held engineering roles at Qualcomm and Texas Instruments, and has contributed to radio products spanning Global Positioning System to Long-Term Evolution standards, with cumulative unit sales exceeding one billion devices worldwide. He is the primary customer-facing executive and the anchor of the founding team.</p>
+    </div>
+
+    <div class="founder-entry">
+      <p class="founder-name">Ashish Lachhwani</p>
+      <p class="founder-role">Co-Founder and Chief Business Officer</p>
+      <p>Ashish holds an engineering degree from the Indian Institute of Technology, Madras, one of India's premier technical institutions. He spent over two decades in Radio Frequency and mixed-signal semiconductor design at Texas Instruments and Qualcomm before co-founding Steradian Semiconductors alongside Gireesh. Following the Renesas acquisition, he served as a Founding Director at Renesas Electronics in Tokyo, giving him direct exposure to enterprise procurement and commercial relationships at a large Japanese semiconductor multinational. At Maieutic, he leads all business development and commercial strategy. His Indian Institute of Technology pedigree and post-acquisition executive experience are directly relevant to both the engineering credibility and the enterprise sales motion the company needs to execute.<sup>[9]</sup></p>
+    </div>
+
+    <div class="founder-entry">
+      <p class="founder-name">Rakesh Kumar</p>
+      <p class="founder-role">Co-Founder and Chief Product Officer</p>
+      <p>Rakesh holds a Bachelor of Engineering in Electrical, Electronics and Communications Engineering from Delhi College of Engineering. He brings over two decades of Radio Frequency Integrated Circuit design experience, having worked at Texas Instruments and Qualcomm before co-founding Steradian Semiconductors. At Steradian, he led the development of millimetre-wave radar modules with artificial intelligence-driven real-time object detection as Chief Product Officer. Following the Renesas acquisition, he served as a Product Architect at Renesas Electronics. He holds 13 issued United States patents. At Maieutic, he leads product strategy and the definition of the copilot's capabilities against real engineering workflows.<sup>[9]</sup></p>
+    </div>
+
+    <div class="founder-entry">
+      <p class="founder-name">Krishna Sankar M</p>
+      <p class="founder-role">Co-Founder and Chief Technology Officer</p>
+      <p>Krishna is the one founder who did not come from Steradian, and he represents the deliberate addition of dedicated artificial intelligence and machine learning depth to a team whose prior expertise was in chip design. He has deep expertise in digital signal processing algorithms and applied artificial intelligence systems. Most recently, he served as Vice President of Systems and Analytics at LifeSignals, where he led the development of the algorithm stack for time-series medical data analysis. He was previously a voting member of the Institute of Electrical and Electronics Engineers 802.11 standards body, contributing to 802.11ac and 802.11n standardisation and modem development at Broadcom and Wipro. He has also built and deployed text-to-speech engines using generative artificial intelligence models. He is the architect of the proprietary model that sits at the core of the product.<sup>[9]</sup></p>
+    </div>
+
+    <h3>3.2 Team Completeness</h3>
+
+    <div class="prose-section">
+      <p>The four co-founders collectively hold 70 patents and bring over 80 combined years of experience in chip design, artificial intelligence applications, and product development at globally recognised semiconductor companies.<sup>[2]</sup> Three of the four built and exited a company together, giving the team shared operating history and proven ability to execute under pressure through to a liquidity event.</p>
+      <p>Two of the three investors in this round have prior history with the founding team. Endiya Partners was an early investor in Steradian Semiconductors.<sup>[2]</sup> The lead partner at University of Tokyo Edge Capital Partners has known Gireesh Rajendran, Ashish Lachhwani, and Rakesh Kumar since 2018, when he first met them while they were building Steradian.<sup>[2]</sup> This continuity of investor-founder trust across two companies and seven years is uncommon and meaningful. It substantially de-risks the relationship capital dimension of this deal.</p>
+      <p>The company has 17 full-time employees as of February 2026.<sup>[10]</sup> The primary gap at this stage is a dedicated commercial leader. No head of sales or revenue has been publicly announced, and all customer development is currently founder-led. This is appropriate at the early customer trials stage but will need to be addressed before the company moves toward general availability and broader commercial rollout.</p>
+    </div>
+
+    <h3>3.3 Analyst Assessment of Team</h3>
+
+    <div class="prose-section">
+      <p>This is one of the strongest founding team profiles visible in Indian deep technology at the seed stage. Three of the four co-founders share the specific and rare combination of deep analog semiconductor domain expertise, prior co-founding experience together, and a completed exit to a strategic acquirer in the same industry. The Renesas acquisition of Steradian for approximately USD 41 million on total funding of USD 4.7 million is a meaningful data point, less for the financial return and more for what it signals: this team has already convinced a major Japanese semiconductor company to pay a significant sum for their work once before. They are now returning to solve a problem they understand better than almost any other founding team available in this space.</p>
+      <p>The addition of Krishna Sankar as Chief Technology Officer is a deliberate and well-constructed move. The Steradian team's expertise was in building chips, not in building artificial intelligence systems. Maieutic's product requires both, and the founding team composition reflects that clearly. The risk worth monitoring is on the commercial side. The founders have strong engineering credibility and existing relationships with design centres, but no dedicated revenue leader has been identified. As the company exits the customer trials phase and needs to convert pilots into paid contracts at scale, this gap will become more consequential and should be a condition of engagement in the Series A conversation.</p>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════ PART 04 -->
+    <span class="memo-part-label">Part 04</span>
+    <h2>Market Opportunity</h2>
+
+    <h3>4.1 Where Maieutic Sits in the Electronic Design Automation Pipeline</h3>
+
+    <div class="prose-section">
+      <p>Before sizing the market, it is important to establish precisely where in the chip design workflow Maieutic's product intervenes, because this determines both the competitive landscape and the monetisation path.</p>
+      <p>The Electronic Design Automation software market is structured around per-seat annual subscription licences sold to chip designers at semiconductor companies globally. Annual licensing costs for Electronic Design Automation software range between USD 50,000 and USD 500,000 per seat depending on tool complexity, with mainstream enterprise toolchain licences commonly understood to run approximately USD 100,000 per seat per year.<sup>[34]</sup> Both Synopsys and Cadence Design Systems have invested in artificial intelligence augmentation of their toolchains. However, their products, including Synopsys Digital Sign-Off Artificial Intelligence and Cadence Cerebrus, address the digital design optimisation and physical implementation phases of chip development. The early-stage analog design phase, covering specification interpretation, circuit architecture selection, topology trade-off analysis, and pre-simulation design review, has not been addressed by either company's artificial intelligence product roadmap.</p>
+      <p>Maieutic inserts its copilot at precisely this unaddressed phase. The product does not replace the underlying Cadence or Synopsys toolchain. It sits upstream of those tools, at the point where an engineer is making design decisions before formal simulation begins. This means Maieutic is not competing with the incumbents for their existing licence revenue. It is selling a complementary productivity layer on top of an existing toolchain investment, which substantially lowers procurement friction.</p>
+      <p>The return on investment case is quantifiable. Experienced analog and Radio Frequency design engineers in India at multinational design centres earn between INR 17.8 lakh and INR 38.5 lakh per year at the mid-level, with principal engineers earning INR 35 lakh to INR 80 lakh or above annually, equivalent to approximately USD 21,000 to USD 96,000 in base salary.<sup>[29]</sup> Maieutic's claimed 50 to 66 percent reduction in early-stage analog design cycle time translates, on the conservative 50 percent figure, to freeing approximately half of an engineer's annual productive time, against a subscription priced at a fraction of that cost. The return on investment calculation for a procurement team requires no narrative, only arithmetic.</p>
+    </div>
+
+    <h3>4.2 Market Sizing</h3>
+
+    <div class="prose-section">
+      <p><strong>Total Addressable Market</strong></p>
+      <p>The global Electronic Design Automation software market was valued at USD 14.55 billion in 2025 and is projected to reach USD 34.71 billion by 2035, growing at a compound annual growth rate of 9.08 percent.<sup>[11]</sup> Within this total, schematic capture tools are used in over 90 percent of initial design stages and account for 35 percent of all Electronic Design Automation workflows in 2024. Simulation and verification tools together account for 48 percent of demand by installation count.<sup>[11]</sup> These two segments together represent 83 percent of total Electronic Design Automation workflow usage for analog engineers, meaning Maieutic's copilot targets the dominant share of a practising analog engineer's daily tool usage, not a peripheral workflow.</p>
+      <p><strong>Serviceable Addressable Market</strong></p>
+      <p>The analog and mixed-signal integrated circuit design tools segment represents Maieutic's direct serviceable market. This segment was valued at USD 2 billion in 2024, within the broader Analog and Digital Integrated Circuit Development Tools market valued at USD 4.5 billion in 2024 and projected to reach USD 8.2 billion by 2034 at a compound annual growth rate of 6.2 percent.<sup>[12]</sup> Critically, artificial intelligence-powered modelling in analog and mixed-signal Electronic Design Automation suites has already delivered simulation speed increases of 24 percent across over 9,000 analog chip designers.<sup>[12]</sup> This confirms that the buyer base for artificial intelligence-augmented analog tools already exists and is paying. Maieutic is entering a segment with demonstrated willingness to pay, not creating one from scratch.</p>
+      <p><strong>Serviceable Obtainable Market (12 to 24 months)</strong></p>
+      <p>India's chip design workforce provides the clearest bottoms-up calculation available. India employs approximately 20 percent of the world's semiconductor design engineers, or approximately 125,000 individuals, and designs approximately 3,000 individual integrated circuits per year.<sup>[13]</sup> Of India's semiconductor workforce, 38 percent are employed directly in Electronic Design Automation roles, giving approximately 47,500 engineers in India who interact with Electronic Design Automation toolchains daily.<sup>[13]</sup></p>
+      <p>At a 1,000-seat penetration within 24 months at a per-seat annual subscription of USD 12,000, Maieutic generates USD 12 million in annual recurring revenue from India alone, representing a penetration rate of approximately 2 percent of the Electronic Design Automation-engaged engineering workforce in India. Scaling to 5,000 seats at the same price yields USD 60 million in annual recurring revenue, representing approximately 11 percent penetration of the same base. Both scenarios sit within a commercially credible range for a business-to-business software product addressing a specific engineering pain point with a well-defined buyer profile.</p>
+    </div>
+
+    <h3>4.3 Market Dynamics</h3>
+
+    <div class="prose-section">
+      <p><strong>The talent shortage is structural and creates urgency at the procurement level.</strong></p>
+      <p>India's semiconductor talent pool currently exceeds 250,000 professionals, with approximately 43,000 new jobs added in the 2024 to 2025 period.<sup>[33]</sup> Against this, the India Electronics and Semiconductor Association estimates a shortfall of 300,000 engineers across design, fabrication, and test disciplines, despite a projected need for 85,000 additional professionals by 2027.<sup>[33]</sup> The shortfall exceeds the size of the entire current workforce. For analog engineering specifically, this shortage is more acute because analog engineers require a decade or more of specialised experience and cannot be replaced by generalist hires or retrained software engineers in any short timeframe. A productivity tool that multiplies the output of each existing engineer moves from a discretionary purchase to a workforce continuity tool in procurement terms.</p>
+      <p><strong>New design centre openings are continuously adding addressable accounts.</strong></p>
+      <p>Intel India employs 13,000 engineers and operates the largest Intel design centre outside the United States.<sup>[30]</sup> Nvidia employs between 4,000 and 10,000 engineers in India, representing 10 to 30 percent of its global workforce. AMD operates its largest global design centre in Bengaluru with approximately 3,000 engineers. NXP Semiconductors has announced an investment of over USD 1 billion to double its research and development presence in India.<sup>[30]</sup> Bengaluru alone hosts over 300 design firms.<sup>[3]</sup> Each of these expansions creates new potential seat volume for Maieutic without requiring the company to change geography, segment, or sales motion.</p>
+      <p><strong>The commercial category for artificial intelligence augmentation of Electronic Design Automation is proven.</strong></p>
+      <p>The use of artificial intelligence-powered verification in Electronic Design Automation increased by 35 percent among Tier 1 semiconductor firms in 2024, helping identify up to 21 percent more design bugs before silicon tape-out.<sup>[27]</sup> Procurement teams at major design centres have already accepted, budgeted for, and deployed artificial intelligence augmentation of the Electronic Design Automation workflow. Maieutic's ask is not to create a new budget line but to direct an existing and growing one toward a product that addresses the specific analog phase no incumbent has yet covered.</p>
+      <p><strong>The Japan and South Korea expansion path has a defined customer list.</strong></p>
+      <p>Japan is home to Renesas Electronics, Rohm, Murata, and TDK, all of which operate analog chip design operations at scale. South Korea's Samsung Semiconductor and SK Hynix represent a third market. The University of Tokyo Edge Capital Partners investment opens institutional introductions in Japan that a cold outreach strategy could not replicate at this stage. The founding team's existing relationship with Renesas, the company that acquired their prior business, gives them a warm entry point into the natural second market for the product before any new relationship-building is required.<sup>[3]</sup></p>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════ PART 05 -->
+    <span class="memo-part-label">Part 05</span>
+    <h2>Traction</h2>
+
+    <div class="memo-callout">
+      <span class="memo-callout-label">Analyst Note</span>
+      <p>A company incorporated in March 2025 that closed its seed round in July 2025 will not carry revenue metrics at this stage, and presenting estimated or inferred figures would be misleading. The honest proof points available are the three confirmed customer engagements, the active inbound pipeline reported by the Chief Executive Officer, and the customer trial commencement in March 2026. These are appropriate and credible signals for a seed-stage deep technology company. The traction thesis here rests on team and timing, not on commercial validation, which is an accepted position for a company at this precise point in its lifecycle.</p>
+    </div>
+
+    <div class="prose-section">
+      <p>The cap table structure merits noting. As of October 2025, founders retain 66.14 percent of the company, institutional investors hold 24.37 percent, and the Employee Stock Option Pool accounts for 9.49 percent.<sup>[9]</sup> This is a healthy founder ownership structure for a seed-stage deep technology company and signals that the round was raised at terms favourable to long-term founder alignment.</p>
+    </div>
+
+    <table class="memo-table">
+      <tbody>
+        <tr>
+          <td class="memo-table-key">Revenue (Monthly / Annual Recurring)</td>
+          <td>Not applicable. Company is pre-revenue as of March 2026.</td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Revenue Growth (Month on Month)</td>
+          <td>Not applicable.</td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Number of Paying Customers</td>
+          <td>None confirmed publicly. Commercial deployment expected from 2026 onwards.</td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Number of Users / Pilots</td>
+          <td>Three global customers confirmed in active engagement as of July 2025. No names publicly disclosed.</td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Key Named Customers / Logos</td>
+          <td>Not publicly disclosed. Initial rollout targets global chip companies with design operations in India and Japanese semiconductor companies.</td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Net Promoter Score / Retention / Churn</td>
+          <td>Not applicable at this stage.</td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Waitlist / Pipeline</td>
+          <td>Active pipeline of interested parties confirmed by Chief Executive Officer Gireesh Rajendran in October 2025. No figures disclosed.</td>
+        </tr>
+        <tr>
+          <td class="memo-table-key">Product Status</td>
+          <td>Pre-general-availability. Early customer trials commenced March 2026. Broader commercial rollout to follow.</td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <!-- ═══════════════════════════════════════════ PART 06 -->
+    <span class="memo-part-label">Part 06</span>
+    <h2>Competition and Differentiation</h2>
+
+    <div class="prose-section">
+      <p>The competitive landscape for Maieutic has four distinct layers, each of which requires honest treatment. The most important conclusion of this analysis is stated plainly at the outset: Maieutic's current advantage is a timing lead, not a structural moat. The memo addresses both the near-term window and the medium-term risk with equal weight.</p>
+    </div>
+
+    <h3>Direct Competitors: Funded Startups in Analog AI Design</h3>
+
+    <div class="competitor-entry">
+      <p class="competitor-name">Astrus</p>
+      <p class="competitor-meta">Founded 2022 &nbsp;&middot;&nbsp; Toronto &nbsp;&middot;&nbsp; USD 13.3M raised &nbsp;&middot;&nbsp; Lead: Khosla Ventures</p>
+      <p>Astrus, founded in 2022 and headquartered in Toronto, is the most direct analog-focused competitor to Maieutic. It raised USD 8.0 million in September 2025 led by Khosla Ventures, bringing total funding to USD 13.3 million across four rounds.<sup>[31]</sup> Astrus is building a physics-aware foundation model for analog chip design, initially focused on automating high-speed Serialiser/Deserialiser design using a reinforcement learning architecture.</p>
+      <p>The critical distinction between Astrus and Maieutic is the phase of the workflow each company targets. Astrus uses reinforcement learning to generate and evaluate circuit layouts, which is a downstream, post-specification workflow. Maieutic's copilot targets the upstream phase: specification interpretation, architecture selection, and topology trade-off analysis before simulation begins. These approaches could converge as both companies extend their roadmaps, but they are targeting different workflow stages today. Astrus is better capitalised than Maieutic on a per-company basis and is backed by one of the most recognised names in venture capital, which accelerates its ability to hire and expand its product scope.</p>
+    </div>
+
+    <div class="competitor-entry">
+      <p class="competitor-name">ChipAgents (formerly Alpha Design AI)</p>
+      <p class="competitor-meta">Founded 2024 &nbsp;&middot;&nbsp; Goleta, California &nbsp;&middot;&nbsp; USD 74M raised &nbsp;&middot;&nbsp; Lead: Bessemer Venture Partners</p>
+      <p>ChipAgents, founded in 2024 and based in Goleta, California, has raised USD 74 million across three funding rounds including a Series A completed in February 2026, backed by Bessemer Venture Partners and Matter Venture Partners.<sup>[32]</sup> It focuses on digital chip design workflows: Register Transfer Level generation, testbench creation, waveform debugging, and functional verification using agentic artificial intelligence. It does not target the analog design workflow today.</p>
+      <p>ChipAgents is not a current competitor to Maieutic but is the clearest signal of how fast capital is concentrating in the artificial intelligence-augmented Electronic Design Automation space. ChipAgents has raised 12 times Maieutic's total seed round in less time. If investor appetite for this category sustains, the boundary between digital and analog tooling may not hold permanently, and ChipAgents has the capital to extend its scope.</p>
+    </div>
+
+    <h3>Indirect Competitors: Electronic Design Automation Incumbents</h3>
+
+    <div class="prose-section">
+      <p>Synopsys, Cadence Design Systems, and Siemens EDA together account for approximately 74 percent of global Electronic Design Automation revenue, with Synopsys at 31 percent, Cadence at 30 percent, and Siemens at 13 percent.<sup>[28]</sup> All three are actively building artificial intelligence capabilities into their toolchains. The question for this memo is not whether they are investing in artificial intelligence. They are. The question is whether their artificial intelligence roadmaps are moving toward the specific phase of the workflow that Maieutic occupies.</p>
+    </div>
+
+    <div class="competitor-entry">
+      <p class="competitor-name">Synopsys</p>
+      <p>At Synopsys Converge 2026, held on 11 March 2026, Synopsys announced new Analog and Mixed Signal Design capabilities enabling greater electromagnetic accuracy and faster power integrity analysis for analog design, with early access customers already in active beta engagements and production availability expected within months.<sup>[20]</sup> In the same event, Synopsys unveiled AgentEngineer, described as an industry-first Level 4 agentic workflow for design and verification. AgentEngineer uses natural language and formal specification to generate Register Transfer Level code, run design checks, and generate unit-level testbenches, reducing a process that previously took four to six months to one delivering two to five times productivity improvements in select cases.<sup>[20]</sup></p>
+      <p>AgentEngineer's current implementation covers the digital front-end design workflow, not analog. However, industry analysts covering the announcement explicitly flagged analog and mixed-signal teams as the next logical extension of the agentic workflow, noting that adoption will be uneven but that the infrastructure to extend there is already built. The timeline for Synopsys extending AgentEngineer into the pre-simulation analog specification and architecture phase is not a distant roadmap question. It is the next logical step of a product already in customer hands.</p>
+    </div>
+
+    <div class="competitor-entry">
+      <p class="competitor-name">Cadence Design Systems</p>
+      <p>Cadence has already deployed artificial intelligence inside Virtuoso, its primary analog design environment. Virtuoso Studio, described as an application of the Cadence AI Generative Artificial Intelligence Platform, integrates artificial intelligence techniques across the analog design flow.<sup>[21]</sup> Its Design Space Optimization feature uses artificial intelligence algorithms to navigate competing specifications and aid in design centering. Cadence's Spectre Fast Monte Carlo Analysis provides a machine learning-based yield analysis solution delivering orders of magnitude speedup over brute force methods. MediaTek has adopted the artificial intelligence-driven Cadence Virtuoso Studio for its 2 nanometre development, achieving a 30 percent productivity gain.<sup>[22]</sup></p>
+      <p>Cadence's current artificial intelligence in Virtuoso focuses on simulation optimisation, design centering, and layout migration. It does not yet offer a natural language interface for specification interpretation or architecture selection at the pre-simulation stage. But the underlying artificial intelligence platform and customer relationships to extend there are already in place.</p>
+    </div>
+
+    <h3>Research-Stage Tools</h3>
+
+    <div class="prose-section">
+      <p>Topology synthesis tools including AnalogGenie and LaMAGIC treat circuit generation as a graph completion task using graph neural networks to output netlists from high-level specifications. Both are trained on open analog design corpora and remain in the research stage, without commercial deployment in production Electronic Design Automation workflows. They are not current competitive threats but represent the academic pipeline from which future commercial products may emerge.</p>
+    </div>
+
+    <h3>Differentiation and Honest Assessment of the Moat</h3>
+
+    <div class="prose-section">
+      <p>Maieutic's genuine points of differentiation relative to the competitive landscape today are as follows.</p>
+      <p>First, no incumbent and no funded startup is currently shipping a natural language generative artificial intelligence interface targeting the pre-simulation analog specification and architecture phase. This is a real gap and Maieutic is entering it first.</p>
+      <p>Second, Maieutic's local deployment capability addresses a procurement requirement that the incumbents' cloud-based artificial intelligence tools do not currently satisfy. Pre-production chip designs are among the most sensitive intellectual property assets a semiconductor company holds, and a tool that runs locally on customer infrastructure without transmitting design data externally meets a hard requirement, not merely a preference.</p>
+      <p>Third, the founding team's domain credibility and existing relationships inside the specific customer base the company is targeting are a distribution advantage that a roadmap extension by Synopsys or Cadence cannot immediately replicate. Enterprise chip design procurement runs on relationships and trust, not on features alone.</p>
+    </div>
+
+    <div class="memo-callout memo-callout-risk">
+      <span class="memo-callout-label">Risk Notice</span>
+      <p>Maieutic does not have a structural moat that a well-resourced incumbent cannot eventually replicate. Its training corpus is not proprietary data. Its natural language interface is a product design decision, not a defensible technical barrier. The only sustainable competitive advantage available to Maieutic is the proprietary workflow data it accumulates from real analog design sessions conducted by real engineers at real design centres. Every customer trial generates feedback data that creates a training flywheel which a later-moving competitor cannot easily replicate. The company has an estimated 12 to 18 months to begin building that flywheel before the incumbents' roadmaps close the window. Execution on the March 2026 customer trials is therefore not merely a product milestone. It is the starting point of the only moat the company can realistically build.</p>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════ PART 07 -->
+    <span class="memo-part-label">Part 07</span>
+    <h2>Business Model and Unit Economics</h2>
+
+    <h3>Revenue Model</h3>
+
+    <div class="prose-section">
+      <p>Maieutic's pricing model has not been publicly disclosed. The following analysis is constructed from the Electronic Design Automation industry's established pricing conventions, comparable artificial intelligence Software as a Service benchmarks, and the return on investment arithmetic available from publicly known engineer cost data. All estimates are flagged as such.</p>
+      <p>The most logical revenue model for Maieutic is a per-seat annual subscription per engineer, with a potential usage-based overlay tied to design sessions or queries processed. This structure mirrors the existing contracting conventions of the Electronic Design Automation industry, which means procurement teams at target customers are already familiar with the instrument and do not need to create a new budget category. It also provides Maieutic with predictable recurring revenue from the base subscription while capturing upside from high-consumption engineering teams through the usage layer.</p>
+      <p>An indicative per-seat annual subscription of USD 10,000 to USD 20,000 per engineer per year is defensible on return on investment grounds. A mid-level analog engineer at a multinational design centre in India carries a base salary of approximately USD 21,000 to USD 46,000 per year. A principal or architect-level engineer costs USD 42,000 to USD 96,000 per year in base salary alone.<sup>[29]</sup> Maieutic's claimed 50 to 66 percent reduction in early-stage analog design cycle time means the tool pays for itself from the first quarter of deployment at any price point within this range. The return on investment case requires arithmetic, not persuasion.</p>
+      <p>The broader industry trend supports this model structure. In 2025, 43 percent of enterprise Software as a Service companies employed hybrid subscription and usage-based pricing models, with adoption projected to reach 61 percent by the end of 2026. Companies employing hybrid models reported 38 percent higher revenue growth compared to single-model approaches.<sup>[23]</sup> Maieutic's natural model evolution is a base per-seat annual subscription in year one, transitioning to a hybrid structure as usage data from customer trials informs the optimal overlay pricing.</p>
+    </div>
+
+    <h3>Gross Margin</h3>
+
+    <div class="prose-section">
+      <p>No gross margin data has been publicly disclosed. The structural benchmark for Software as a Service companies is 75 percent and above, with leading companies approaching 90 percent.<sup>[26]</sup> Maieutic's local deployment architecture is directly favourable to gross margin. Because the product runs on the customer's own infrastructure rather than Maieutic's cloud, inference compute costs are borne by the customer, not by Maieutic. This removes the primary cost driver that compresses gross margins for cloud-delivered artificial intelligence products. A gross margin of 70 to 80 percent at scale is a reasonable benchmark for this delivery model and compares favourably to cloud-native artificial intelligence products in the 60 to 70 percent range.</p>
+    </div>
+
+    <h3>Unit Economics</h3>
+
+    <div class="prose-section">
+      <p>No Customer Acquisition Cost, Lifetime Value, or payback period data has been publicly disclosed. The following estimates are benchmarked from comparable Indian deep technology and enterprise Software as a Service companies at the seed stage and are presented as directional.</p>
+      <p>Customer Acquisition Cost at this stage is founder-led and therefore low in cash terms but high in founder time. As the company moves toward a dedicated sales motion, Customer Acquisition Cost for enterprise chip design accounts is expected to be elevated given the length and complexity of procurement cycles at multinational semiconductor companies. A typical enterprise Software as a Service sales cycle at a multinational runs three to nine months from first contact to signed contract.</p>
+      <p>Lifetime Value, assuming a per-seat annual subscription of USD 12,000 and a conservative annual net revenue retention of 100 percent with a five-year average contract life, yields a Lifetime Value per seat of approximately USD 60,000. Against an estimated enterprise Customer Acquisition Cost of USD 15,000 to USD 25,000 per account, the implied Lifetime Value to Customer Acquisition Cost ratio of 2.4 to 4.0 times sits at the lower end of the acceptable range for Software as a Service at scale but is appropriate for an enterprise product at the pre-commercial stage. This ratio is expected to improve materially as the company moves from founder-led sales to a repeatable sales motion.</p>
+    </div>
+
+    <h3>Burn Rate and Runway</h3>
+
+    <div class="prose-section">
+      <p>Burn rate has not been publicly disclosed. With a confirmed total raise of USD 6.0 million, an engineering-first mandate, and a confirmed team of 17 employees based in Bengaluru as of February 2026,<sup>[10]</sup> a monthly burn rate of USD 200,000 to USD 300,000 is a reasonable benchmark for an early-stage Indian deep technology company at this headcount and stage. At the midpoint of USD 250,000 per month, the USD 6.0 million seed round provides approximately 24 months of runway from the October 2025 close, consistent with the standard 18 to 24-month seed runway target and implying a Series A conversation beginning in the second half of 2026.</p>
+    </div>
+
+    <h3>Series A Milestone</h3>
+
+    <div class="prose-section">
+      <p>No specific Series A milestone has been publicly stated. Based on the customer trial commencement in March 2026 and the capital runway analysis above, the logical Series A trigger would be conversion of the initial three customer engagements to paid annual contracts, plus demonstrable seat expansion within those accounts. In the Indian deep technology context, reaching USD 500,000 to USD 1 million in Annual Recurring Revenue with two to three referenceable enterprise customers within 18 months of commercial launch would represent a credible and fundable Series A milestone.</p>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════ PART 08 -->
+    <span class="memo-part-label">Part 08</span>
+    <h2>Deal Terms and Use of Funds</h2>
+
+    <h3>Round Structure</h3>
+
+    <div class="prose-section">
+      <p>Maieutic has closed a USD 6.0 million seed round in two tranches. The first close of USD 4.15 million was co-led by Endiya Partners and Exfinity Venture Partners in July 2025.<sup>[2]</sup> The second tranche of USD 1.85 million was contributed by University of Tokyo Edge Capital Partners in October 2025, completing the round.<sup>[3]</sup> The round is fully closed. There is no open allocation.</p>
+    </div>
+
+    <h3>Valuation</h3>
+
+    <div class="prose-section">
+      <p>Pre-money and post-money valuation have not been publicly disclosed. An implied post-money valuation can be back-calculated from the cap table: institutional investors hold 24.37 percent of the company for a total investment of USD 6.0 million, implying a post-money valuation of approximately USD 24.6 million and a pre-money valuation of approximately USD 18.6 million.<sup>[9]</sup> This is an estimate derived from publicly available cap table data and should be verified directly with the company before any investment decision is made.</p>
+      <p>Benchmarked against the wider market, this implied pre-money valuation of approximately USD 18.6 million sits at the upper end of the 75th percentile for artificial intelligence-enabled Software as a Service at the seed stage, where the median pre-money valuation ranges from USD 7.5 million to USD 12 million and the 75th percentile runs from USD 12 million to USD 20 million.<sup>[35]</sup> The premium relative to the median is justified by three factors: the founding team's prior exit to Renesas Electronics, the cross-border institutional validation represented by University of Tokyo Edge Capital Partners' participation, and the deep technology differentiation of the product in a category with limited direct competition today.</p>
+    </div>
+
+    <h3>Investment Instrument</h3>
+
+    <div class="prose-section">
+      <p>Not publicly disclosed. Compulsorily Convertible Preference Shares is the standard instrument for Indian seed-stage institutional rounds and is assumed here pending direct confirmation.</p>
+    </div>
+
+    <h3>Cap Table</h3>
+
+    <div class="prose-section">
+      <p>As of October 2025, the cap table structure is as follows. Founders hold 66.14 percent of the company, institutional investors hold 24.37 percent, and the Employee Stock Option Pool accounts for 9.49 percent.<sup>[9]</sup> This is a healthy founder ownership structure for a seed-stage deep technology company. It signals that the round was raised at terms that preserve long-term founder alignment and leave adequate equity headroom for Series A and Series B dilution without triggering founder motivation risk.</p>
+    </div>
+
+    <h3>Other Terms</h3>
+
+    <div class="prose-section">
+      <p>Pro-rata rights, board seat or observer rights, information rights, anti-dilution provisions, and liquidation preference terms are not in the public record. These would need to be confirmed directly with the company and its existing investors in any diligence process.</p>
+    </div>
+
+    <h3>Use of Funds</h3>
+
+    <div class="prose-section">
+      <p>The confirmed allocation from public statements covers two categories: engineering team expansion and product development ahead of commercial launch.<sup>[2]</sup> No specific percentage breakdown has been disclosed. A model consistent with an engineering-first mandate at this stage would allocate approximately 65 to 70 percent of the raise to engineering and product, approximately 15 to 20 percent to go-to-market and business development, approximately 5 to 10 percent to infrastructure and compute, and approximately 5 to 10 percent to general and administrative costs including legal and finance. These allocations are estimates benchmarked from comparable Indian deep technology seed-stage companies and are presented as directional pending direct company confirmation.</p>
+    </div>
+
+    <h3>Analyst Note on Tower Semiconductor</h3>
+
+    <div class="memo-callout">
+      <span class="memo-callout-label">Analyst Note</span>
+      <p>Crunchbase lists Tower Semiconductor as an entity associated with Maieutic in its corporate data. Tower Semiconductor is a major Israeli-headquartered specialty foundry with manufacturing operations in India. If this reflects a confirmed strategic investor relationship, it would represent a material traction signal beyond the three disclosed financial investors and warrants direct verification with the company as a priority item in any diligence process. It has not been included in the confirmed round structure above pending that verification.</p>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════ PART 09 -->
+    <span class="memo-part-label">Part 09</span>
+    <h2>Why Now and Thesis Fit</h2>
+
+    <div class="prose-section">
+      <p>There are four distinct and simultaneous forces that make March 2025 the correct founding date for Maieutic. The convergence of these forces is not coincidental. It is the investment thesis.</p>
+    </div>
+
+    <h3>The Technology Inflection is Real and Precisely Timed</h3>
+
+    <div class="prose-section">
+      <p>Domain-specific fine-tuning of large language models on narrow technical corpora became commercially viable in 2023 and 2024. Before this inflection, the tacit knowledge embedded in decades of analog engineering practice could not be encoded in a way that a software system could retrieve and apply in real time. After it, it can. Maieutic was incorporated in March 2025, at the earliest point at which the underlying model capability was mature enough to build a production-grade product on top of it. There is no earlier version of this company that could have existed with the same product. The founding date is not a coincidence. It is a bet on the precise moment at which the technology crossed the viability threshold.</p>
+    </div>
+
+    <h3>The Government Policy Environment is the Most Favourable in India's History for This Category</h3>
+
+    <div class="prose-section">
+      <p>In the fiscal year 2025 to 2026, the Government of India enhanced allocations for Production Linked Incentive schemes, semiconductor initiatives, and the IndiaAI Mission by approximately 84 percent to INR 18,000 crore. The allocation for semiconductor projects reached INR 2,499.96 crore, more than double the prior year's INR 1,200 crore. The IndiaAI Mission allocation increased more than eleven-fold to INR 2,000 crore.<sup>[14]</sup></p>
+      <p>The Union Budget 2026 to 2027 went further. The government announced India Semiconductor Mission 2.0, explicitly focused on full-stack Indian intellectual property creation, design software, and supply chain fortification. The Electronics Components Manufacturing Scheme, launched in April 2025 with an initial outlay of INR 22,919 crore, attracted investment commitments at double its original target within its first year. The government has proposed to increase the scheme's outlay to INR 40,000 crore for 2026 to 2027.<sup>[15]</sup></p>
+      <p>Within this broader envelope, the Design Linked Incentive scheme is directly relevant to Maieutic. The scheme provides a Product Design Linked Incentive reimbursing up to 50 percent of eligible expenditure, capped at INR 150 million (approximately USD 1.6 million) per project, and a Deployment Linked Incentive of 4 to 6 percent of net sales turnover over five years, capped at INR 300 million (approximately USD 3.38 million) per applicant.<sup>[16]</sup> Maieutic is directly eligible as a chip design software startup. A confirmed Design Linked Incentive allocation would offset approximately 27 percent of the total seed raise in product development expenditure alone, reducing burn materially without additional dilution. Whether the company has applied for this allocation is an open diligence question.</p>
+    </div>
+
+    <h3>The India Design Centre Ecosystem is Expanding Faster Than the Talent Pool Can Replenish</h3>
+
+    <div class="prose-section">
+      <p>Intel India now employs 13,000 engineers and operates the largest Intel design centre outside the United States.<sup>[30]</sup> Nvidia employs between 4,000 and 10,000 engineers in India, representing 10 to 30 percent of its global engineering workforce. AMD operates its largest global design centre in Bengaluru with approximately 3,000 engineers. NXP Semiconductors has committed over USD 1 billion to double its research and development presence in India.<sup>[30]</sup></p>
+      <p>Against this expanding demand, India's semiconductor workforce faces a projected shortfall of 300,000 engineers by 2027 across design, fabrication, and test disciplines, despite a current base of approximately 250,000 professionals and 43,000 new jobs added in the 2024 to 2025 period alone.<sup>[33]</sup> The shortfall exceeds the size of the entire current workforce. For analog engineering specifically, the shortage is structurally more severe because experienced analog engineers require a decade or more to develop and cannot be substituted by generalist hires. Every quarter that passes without a productivity solution makes the problem more acute and the procurement case for Maieutic's tool more urgent.</p>
+    </div>
+
+    <h3>The India to Japan Corridor is Active, Institutionally Funded, and Maps Directly onto Maieutic's Customer List</h3>
+
+    <div class="prose-section">
+      <p>Japan is home to Renesas Electronics, Rohm, Murata, and TDK, all of which operate large-scale analog chip design operations. The University of Tokyo Edge Capital Partners investment provides institutional introductions to this customer base that a cold outreach strategy could not replicate at this stage. Critically, Renesas is simultaneously the company that acquired Maieutic's founders' prior business and a natural first-call account in the Japanese market. Three of the four co-founders have existing institutional relationships inside Renesas at the engineering and executive level from their post-acquisition tenure. This is a distribution advantage embedded in the founding team that cannot be manufactured after the fact.<sup>[3][6][7]</sup></p>
+    </div>
+
+    <h3>Thesis Fit</h3>
+
+    <div class="prose-section">
+      <p><strong>Sector fit:</strong> Applied artificial intelligence in a deep technology vertical with global applicability and an India beachhead. This is a business-to-business infrastructure play, not a consumer product. The value proposition is quantified, the buyer is a procurement team with a defined budget, and the return on investment is arithmetic. It fits a fund with a thesis around applied artificial intelligence in enterprise deep technology at the seed stage.</p>
+      <p><strong>Stage fit:</strong> Seed. The company has closed its seed round and is entering customer trials. A First Look assessment at this stage is appropriate for a fund considering participation in a bridge or participating in the Series A when the company has converted pilots to paid contracts and established initial Annual Recurring Revenue.</p>
+      <p><strong>Geography fit:</strong> India founding and beachhead, with Japan as the defined second market and the United States as the natural third. The University of Tokyo Edge Capital Partners investment has already de-risked the Japan market access question at the institutional level.</p>
+      <p><strong>Check size fit:</strong> The seed round is closed. The relevant conversation for a new investor is a Series A participation of USD 500,000 to USD 2 million targeting 2 to 5 percent ownership, contingent on pilot conversion to paid contracts, confirmed intellectual property protection, and a dedicated commercial hire. The entry valuation at Series A will be materially higher than the implied USD 24.6 million post-money at seed, likely in the range of USD 40 million to USD 60 million post-money, based on comparable Indian deep technology Series A benchmarks.<sup>[35]</sup></p>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════ PART 10 -->
+    <span class="memo-part-label">Part 10</span>
+    <h2>Key Risks and Open Questions</h2>
+
+    <h3>Key Risks</h3>
+
+    <div class="risk-heading">
+      <span class="risk-heading-text"><strong>Risk 1: The competitive window is closing on a shorter timeline than the product roadmap assumes.</strong></span>
+      <span class="severity-tag severity-high">Severity: High</span>
+    </div>
+
+    <div class="risk-body">
+      <p>This is the most material risk in this memo and it has been upgraded from a standard competitive analysis based on additional research.</p>
+      <p>Celera Semiconductor, founded in 2018 and headquartered in San Jose, raised a USD 20 million Series A from Maverick Silicon in August 2025.<sup>[18]</sup> Its Nestos platform uses digital twins of analog functions to replace manual circuit design with software-based optimisation and generation. Celera has demonstrated to major customers that full-custom analog integrated circuits can be developed in 10 percent of the time required by traditional analog workflows, and sampled the first analog integrated circuit designed entirely by software in March 2025.<sup>[19]</sup> As of December 2025, Celera is actively ramping production through 2026 with supply chain partners including Vanguard International Semiconductor and the ASE Group.<sup>[19]</sup></p>
+      <p>Celera currently operates as a chip design services company, using its platform internally to design and deliver finished silicon to original equipment manufacturer customers. Maieutic sells a copilot tool directly to engineers inside existing design centres. These are different business models targeting different buyers today. However, Celera's platform already delivers a 10-fold acceleration in analog development cycles, compared to Maieutic's claimed 2-to-3-fold reduction on cycle time. If Celera elects to license the Nestos platform externally as a standalone tool rather than keeping it proprietary to its own services business, the competitive overlap with Maieutic becomes direct and immediate. This scenario has not been confirmed but it is the single most consequential competitive event to monitor.</p>
+      <p>Separately, Synopsys announced new Analog and Mixed Signal Design capabilities at Synopsys Converge 2026 on 11 March 2026, with early access customers already in beta and production availability expected within months.<sup>[20]</sup> AgentEngineer, Synopsys' agentic workflow product, currently covers digital front-end design but its architecture is designed to extend across the full design workflow. The incumbent with 31 percent global Electronic Design Automation market share and existing relationships with every major chip design centre in India is eleven days into a product launch cycle that is directionally aimed at Maieutic's market.<sup>[28]</sup></p>
+    </div>
+
+    <div class="risk-heading">
+      <span class="risk-heading-text"><strong>Risk 2: No confirmed intellectual property protection exists.</strong></span>
+      <span class="severity-tag severity-med-high">Severity: Medium to High</span>
+    </div>
+
+    <div class="risk-body">
+      <p>No patents filed by Maieutic Semiconductors Private Limited are discoverable in the Indian Patent Office public database, the United States Patent and Trademark Office database, or Google Patents as of March 2026. The company was incorporated twelve months ago. The Indian Patent Office granted patents for 81.4 percent of processed applications in the most recent period with an average time to first action of 10.6 months,<sup>[24]</sup> meaning a patent filed at incorporation in March 2025 would be at or approaching first action now. The absence of any public filing is notable. The fine-tuned model is protectable only as a trade secret, not as a patent, and trade secret protection in India is governed by common law rather than statute, making enforcement in a breach scenario more complex than a registered patent.</p>
+    </div>
+
+    <div class="memo-callout memo-callout-mitigant">
+      <span class="memo-callout-label">Mitigant</span>
+      <p>Local deployment architecture means the model weights never leave Maieutic's or the customer's own infrastructure, reducing exfiltration risk. But this is an operational mitigant, not a legal one. An intellectual property strategy must be confirmed before Series A engagement.</p>
+    </div>
+
+    <div class="risk-heading">
+      <span class="risk-heading-text"><strong>Risk 3: Pre-revenue customer concentration with no named accounts.</strong></span>
+      <span class="severity-tag severity-medium">Severity: Medium</span>
+    </div>
+
+    <div class="risk-body">
+      <p>Three customer engagements have been confirmed publicly.<sup>[2]</sup> No names, sectors, or contract structures have been disclosed. If any one of the three does not convert to a paid annual contract, the traction narrative for a Series A conversation is weakened materially. There is currently no way to assess the quality, seniority, or commitment level of these engagements from outside the company.</p>
+    </div>
+
+    <div class="memo-callout memo-callout-mitigant">
+      <span class="memo-callout-label">Mitigant</span>
+      <p>The founding team's existing institutional relationships at Intel, Qualcomm, Texas Instruments, and Renesas from their Steradian tenure mean that these engagements are unlikely to be cold relationships. But confirmation is required. Severity converts to Low if letters of intent or pilot agreements are confirmed in diligence.</p>
+    </div>
+
+    <div class="risk-heading">
+      <span class="risk-heading-text"><strong>Risk 4: The Digital Personal Data Protection Act 2023 compliance timeline is active.</strong></span>
+      <span class="severity-tag severity-low">Severity: Low</span>
+    </div>
+
+    <div class="risk-body">
+      <p>India's Digital Personal Data Protection Rules 2025 were finalised and notified on 13 November 2025.<sup>[25]</sup> Consent manager obligations apply from May 2026, twelve months after finalisation. Full compliance obligations apply from May 2027, eighteen months after finalisation. Maieutic's tool processes engineering session data, user query data, and potentially employee performance signals that may constitute personal data under the Act's definitions.</p>
+    </div>
+
+    <div class="memo-callout memo-callout-mitigant">
+      <span class="memo-callout-label">Mitigant</span>
+      <p>Maieutic's local deployment architecture is structurally aligned with Digital Personal Data Protection Act compliance. By keeping data on the customer's own infrastructure, Maieutic removes itself from the data fiduciary chain entirely. This is a genuine compliance advantage, not merely a technical preference, and the company should be articulating it explicitly in its enterprise sales materials.</p>
+    </div>
+
+    <div class="risk-heading">
+      <span class="risk-heading-text"><strong>Risk 5: The Design Linked Incentive scheme creates a pipeline of government-subsidised future competitors.</strong></span>
+      <span class="severity-tag severity-low">Severity: Low</span>
+    </div>
+
+    <div class="risk-body">
+      <p>72 startups have received access to industry-grade Electronic Design Automation tools under the scheme, with 10 of the 23 approved design projects having secured venture capital funding.<sup>[17]</sup> These companies are building chip design capabilities under subsidised conditions. While none are currently building an analog design copilot in direct competition with Maieutic, the scheme is generating a cohort of technically capable chip design startups that could pivot toward tooling as the market opportunity becomes visible. Their subsidised burn rates distort competitive dynamics in the Indian market and extend their runway relative to unsubsidised peers. Severity is probabilistic rather than immediate and warrants monitoring.</p>
+    </div>
+
+    <h3>Open Questions for Diligence</h3>
+
+    <div class="prose-section">
+      <p><strong>Question 1:</strong> Have the three confirmed customer engagements moved to signed pilot agreements or letters of intent between July 2025 and March 2026? Have any converted to paid annual contracts? Who are the named accounts?</p>
+      <p><strong>Question 2:</strong> Has any patent application been filed by Maieutic with the Indian Patent Office, the United States Patent and Trademark Office, or under the Patent Cooperation Treaty? If so, what does the filing cover and what is the current prosecution status?</p>
+      <p><strong>Question 3:</strong> Has Maieutic applied for or received funding under the Design Linked Incentive scheme? Given direct eligibility for up to USD 1.6 million in Product Design Linked Incentive reimbursement, the absence of a public announcement warrants direct clarification.</p>
+      <p><strong>Question 4:</strong> Is the March 2026 customer trial live as planned, or has the commencement date slipped? What specific milestones define success for the trial phase?</p>
+      <p><strong>Question 5:</strong> How does the founding team frame the scenario in which Celera Semiconductor elects to license the Nestos platform externally? Does the team view this as a realistic competitive scenario and what is the specific response?</p>
+      <p><strong>Question 6:</strong> What is the Tower Semiconductor association visible in third-party data aggregators? Strategic investment, a prospective customer relationship, or a data error requiring correction?</p>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════════ PART 11 -->
+    <span class="memo-part-label">Part 11</span>
+    <h2>Recommendation</h2>
+
+    <div class="memo-recommendation">
+      <span class="memo-rec-label">Recommendation</span>
+      <div class="memo-rec-verdict">Watchlist</div>
+      <p class="memo-rec-sub">With defined conditions for re-engagement at Series A</p>
+    </div>
+
+    <h3>Rationale</h3>
+
+    <div class="prose-section">
+      <p>Maieutic is not a pass. The founding team is among the most credible available in Indian deep technology at the seed stage, the problem is real and structurally underserved, and the timing relative to the large language model inflection is precise. However, the seed round is closed, the product is pre-revenue and entering its first customer trial as of this month, and the competitive window is being compressed in real time by Synopsys, Cadence, and a better-capitalised direct analog in Celera Semiconductor. Placing capital into this company today means paying a Series A price for seed-stage uncertainty, which is not the right entry point.</p>
+      <p>The correct posture is active monitoring with a defined set of conditions that, if met, trigger a Series A conversation. Those conditions are specific, time-bound, and grounded in the risks identified in this memo. A Watchlist designation here is not a soft pass. It is a structured commitment to re-engage when the company has converted proof of concept into proof of business.</p>
+    </div>
+
+    <h3>Conditions for Re-engagement at Series A</h3>
+
+    <div class="prose-section">
+      <p><strong>Condition 1: Pilot conversion to paid contracts.</strong></p>
+      <p>The three confirmed customer engagements must convert to signed, paid annual contracts before a Series A conversation is initiated. Letters of intent are not sufficient. The quality and identity of those customers matter as much as the conversion itself. A signed contract with an Intel India, a Qualcomm, or a Texas Instruments design centre is materially different from a contract with an unnamed domestic firm. The named accounts must be disclosed and referenceable.</p>
+      <p><strong>Condition 2: Confirmed intellectual property protection.</strong></p>
+      <p>At least one patent application must be filed and in active prosecution with the Indian Patent Office or under the Patent Cooperation Treaty before Series A engagement. The application must cover a protectable and specific aspect of the model architecture, training methodology, or system design, not a broad claim that will not survive examination. Trade secret protection alone is insufficient for a company raising from institutional investors who will conduct legal diligence.</p>
+      <p><strong>Condition 3: A dedicated commercial hire.</strong></p>
+      <p>The company must have made at least one senior commercial hire at the level of Vice President of Sales or Head of Revenue before Series A. Founder-led sales is appropriate at the pilot stage. It is not appropriate at the stage of converting pilots to a repeatable revenue motion across multiple enterprise accounts. The hire should have a background in enterprise software sales into semiconductor or Electronic Design Automation buyers specifically.</p>
+      <p><strong>Condition 4: A clear and documented response to the Celera Semiconductor competitive scenario.</strong></p>
+      <p>The founding team must demonstrate in a diligence conversation that they have a specific and credible answer to the scenario in which Celera Semiconductor elects to license the Nestos platform externally. A general answer about team quality and relationships is not sufficient. The answer must address what Maieutic's product will do in the 24 months following a Celera platform licensing announcement that a customer cannot get from Celera. That answer likely involves the proprietary workflow data flywheel described in Part 6, but it needs to be articulated with specificity.</p>
+    </div>
+
+    <h3>Key Reasons to Invest at Series A if Conditions are Met</h3>
+
+    <div class="prose-section">
+      <p>First, the founding team's domain credibility and prior exit to Renesas Electronics give them a distribution advantage inside the specific customer base they are targeting that no competitor can manufacture after the fact. Enterprise semiconductor procurement runs on relationships and trust. This team has both.</p>
+      <p>Second, the market is expanding faster than the competitive response can fill it. Every new design centre opened by a multinational in India between now and the Series A creates a new potential account for Maieutic without requiring the company to change geography, segment, or sales motion. The demand side of this equation is growing independently of anything Maieutic does.</p>
+      <p>Third, the local deployment architecture is a structural alignment with both enterprise intellectual property requirements and the Digital Personal Data Protection Act compliance obligations that take full effect in May 2027. This is a selling point that the incumbents' cloud-delivered tools cannot easily match, and it becomes more valuable, not less, as the compliance deadline approaches.</p>
+    </div>
+
+    <h3>Key Risks Accepted at Series A</h3>
+
+    <div class="prose-section">
+      <p>The competitive window risk from Synopsys and Celera Semiconductor is accepted as a known and monitored risk, not an unknown one. The investment thesis at Series A is that Maieutic has 12 to 18 months from the commencement of customer trials to accumulate enough proprietary workflow data to create a training flywheel that a later-moving competitor cannot easily replicate. That window is finite and the company must execute against it with urgency. A Series A investment is a bet that the team's execution speed and domain relationships are sufficient to build a data moat before the incumbents close the gap.</p>
+      <p>The absence of a structural patent moat is also accepted, on the condition that Condition 2 above has been satisfied and the intellectual property strategy has been clearly articulated.</p>
+    </div>
+
+    <!-- PREPARED BY -->
+    <div class="memo-prepared">
+      <div class="memo-prepared-item">
+        <label>Prepared by</label>
+        <span>Arjun Chatterjee</span>
+      </div>
+      <div class="memo-prepared-item">
+        <label>Date</label>
+        <span>21 March 2026</span>
+      </div>
+      <div class="memo-prepared-item">
+        <label>Status</label>
+        <span>First Look / Watchlist</span>
+      </div>
+    </div>
+
+    <!-- REFERENCES -->
+    <div class="memo-references">
+      <p class="memo-references-title">References</p>
+      <p class="memo-references-note">All factual claims, data points, and attributions in this memo are sourced from the references below. Estimates and benchmarks derived from these sources are flagged as such in the body of the document. No proprietary or non-public information has been used.</p>
+
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[1]</span>
+        <span class="memo-ref-text">Ministry of Corporate Affairs, Government of India. Certificate of Incorporation, Maieutic Semiconductors Private Limited. CIN: U62099KA2025PTC200478. March 2025. Available at: mca.gov.in</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[2]</span>
+        <span class="memo-ref-text">Inc42. "Maieutic Semiconductor Raises $4.15 Mn to Automate Analog Chip Design With AI." July 3, 2025. Available at: inc42.com</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[3]</span>
+        <span class="memo-ref-text">Nikkei Asia. "Japanese VC backs Indian chip startup in possible first for the sector." October 2025. Available at: asia.nikkei.com</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[4]</span>
+        <span class="memo-ref-text">Business Standard. "Maieutic Semiconductor raises seed funding round to automate analog chip design." July 2025. Available at: business-standard.com</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[5]</span>
+        <span class="memo-ref-text">DealStreet Asia. "India's Maieutic Semiconductor closes $6M seed round with UTEC participation." October 2025. Available at: dealstreetasia.com</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[6]</span>
+        <span class="memo-ref-text">Renesas Electronics Corporation. "Renesas Electronics to Acquire Steradian Semiconductors: Accelerating Entry into Automotive Radar Market." Official Press Release. August 31, 2022. Available at: renesas.com/en/about/press-room</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[7]</span>
+        <span class="memo-ref-text">Renesas Electronics Corporation. "Renesas Electronics Completes Acquisition of Steradian Semiconductors." Official Press Release. October 17, 2022. Available at: renesas.com/en/about/press-room</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[8]</span>
+        <span class="memo-ref-text">MIT Technology Review. "Innovators Under 35: 2010 Annual List." Available at: technologyreview.com/innovators-under-35</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[9]</span>
+        <span class="memo-ref-text">Tracxn Technologies. "Maieutic Semiconductor Company Profile, Founder Profiles and Cap Table Data." Tracxn.com. Accessed March 2026.</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[10]</span>
+        <span class="memo-ref-text">Techovedas. "Maieutic Semiconductor: Indian Startup Raises $6M to Automate Analog Chip Design With AI." February 28, 2026. Available at: techovedas.com</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[11]</span>
+        <span class="memo-ref-text">Grand View Research. "Electronic Design Automation (EDA) Market Size, Share and Trends Analysis Report, 2025-2035." 2025.</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[12]</span>
+        <span class="memo-ref-text">MarketsandMarkets. "Analog and Mixed-Signal IC Design Tools Market: Global Forecast to 2034." 2024.</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[13]</span>
+        <span class="memo-ref-text">India Electronics and Semiconductor Association (IESA) and Deloitte. "India Semiconductor Report 2024." IESA, 2024.</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[14]</span>
+        <span class="memo-ref-text">Ministry of Finance, Government of India. "Union Budget 2025-26: Budget at a Glance and Expenditure Profile." Presented February 1, 2025. Available at: indiabudget.gov.in</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[15]</span>
+        <span class="memo-ref-text">Ministry of Finance, Government of India. "Union Budget 2026-27: Budget at a Glance." Presented February 1, 2026. Available at: indiabudget.gov.in</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[16]</span>
+        <span class="memo-ref-text">Ministry of Electronics and Information Technology (MEITY), Government of India. "Design Linked Incentive (DLI) Scheme: Scheme Guidelines and Application Portal." Available at: meity.gov.in</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[17]</span>
+        <span class="memo-ref-text">Ministry of Electronics and Information Technology (MEITY), Government of India. "Progress Under the Design Linked Incentive Scheme." July 2025. Available at: meity.gov.in</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[18]</span>
+        <span class="memo-ref-text">Celera Semiconductor. "Celera Semiconductor Raises $20 Million Series A to Accelerate Analog Chip Design Automation." Official Press Release. August 5, 2025. Available at: celerasemi.com</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[19]</span>
+        <span class="memo-ref-text">Celera Semiconductor. "Celera Semiconductor Samples First Analog IC Completely Designed by Software; Announces Production Ramp." Official Press Release. December 2025. Available at: celerasemi.com</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[20]</span>
+        <span class="memo-ref-text">Synopsys, Inc. "Synopsys Converge 2026: AgentEngineer, Analog AI and Mixed-Signal Design Announcements." Official Event Coverage. March 11, 2026. Available at: synopsys.com</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[21]</span>
+        <span class="memo-ref-text">Cadence Design Systems. "Cadence Virtuoso Studio: AI-Powered Custom and Analog Design Platform." Product Documentation and Press Materials. 2025. Available at: cadence.com</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[22]</span>
+        <span class="memo-ref-text">Cadence Design Systems. "MediaTek Adopts AI-Driven Cadence Virtuoso Studio for Advanced 2nm Process Node Development." Official Press Release. 2025. Available at: cadence.com/company/newsroom</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[23]</span>
+        <span class="memo-ref-text">Chargebee, Inc. "State of Subscriptions Report 2025: Pricing Models, Hybrid Adoption and Revenue Growth Benchmarks." 2025. Available at: chargebee.com/resources</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[24]</span>
+        <span class="memo-ref-text">Office of the Controller General of Patents, Designs and Trade Marks, Government of India. "Annual Report 2023-24: Patent Grant Rates and Processing Timelines." Available at: ipindia.gov.in</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[25]</span>
+        <span class="memo-ref-text">Ministry of Electronics and Information Technology (MEITY), Government of India. "The Digital Personal Data Protection Rules, 2025." Notified November 13, 2025. Published in the Gazette of India. Available at: meity.gov.in</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[26]</span>
+        <span class="memo-ref-text">SaaS Capital. "2025 SaaS Benchmarks Report: Gross Margins, Net Revenue Retention, and Unit Economics." SaaS Capital, 2025. Available at: saas-capital.com</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[27]</span>
+        <span class="memo-ref-text">Frost and Sullivan. "2025 Global Technology Innovation Leadership Award in Analog In-Memory Computing." Recognition for Synopsys Inc. Available at: frost.com</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[28]</span>
+        <span class="memo-ref-text">SemiWiki. "EDA Market Share Analysis: Synopsys, Cadence and Siemens EDA Competitive Positioning." SemiWiki.com, 2024. Available at: semiwiki.com</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[29]</span>
+        <span class="memo-ref-text">AmbitionBox / Naukri.com. "Analog Design Engineer Salary in India: Levels, Companies and Ranges, 2025." Accessed March 2026. Available at: ambitionbox.com</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[30]</span>
+        <span class="memo-ref-text">Intel Corporation, AMD Inc., Nvidia Corporation, NXP Semiconductors. India Engineering Centre and Design Operations. Official Press Releases and Annual Reports, 2024-2025. Available at: intel.com, amd.com, nvidia.com, nxp.com</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[31]</span>
+        <span class="memo-ref-text">Khosla Ventures. "Portfolio Announcement: Astrus, Physics-Aware AI for Analog Chip Design." September 2025. Available at: khoslaventures.com</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[32]</span>
+        <span class="memo-ref-text">Bessemer Venture Partners. "Investment Announcement: ChipAgents Series A." February 2026. Available at: bvp.com</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[33]</span>
+        <span class="memo-ref-text">India Electronics and Semiconductor Association (IESA). "India's Semiconductor Talent Landscape: Addressing the Skills Gap and Workforce Shortfall." IESA, 2025.</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[34]</span>
+        <span class="memo-ref-text">SemiWiki. "Understanding EDA Software Licensing Models, Pricing Structures and Enterprise Contract Conventions." SemiWiki.com, 2024. Available at: semiwiki.com</span>
+      </div>
+      <div class="memo-ref-item">
+        <span class="memo-ref-num">[35]</span>
+        <span class="memo-ref-text">Emergence Capital / Index Ventures. "AI-Native and Deep Technology Seed Stage Valuation Benchmarks: India and Global Comparisons." 2025.</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <p>&#169; 2026 The Context Window</p>
+  <p>Built with GitHub Pages</p>
+</footer>
+
+</body>
+</html>
