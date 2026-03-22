@@ -610,6 +610,23 @@
       background: var(--accent);
       color: var(--bg);
     }
+    .hero-name-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 28px;
+      margin-bottom: 0;
+    }
+    
+    .about-photo {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      object-position: center top;
+      filter: grayscale(100%);
+      display: block;
+      flex-shrink: 0;
+      margin-bottom: 8px;
+    }
   </style>
 </head>
 <body>
@@ -629,7 +646,10 @@
   <div class="hero">
     <div class="hero-left">
       <p class="hero-eyebrow">Analyst &amp; Researcher</p>
-      <h1 class="hero-name">Arjun<br><em>Chatterjee</em></h1>
+      <div class="hero-name-row">
+        <h1 class="hero-name">Arjun<br><em>Chatterjee</em></h1>
+        <img src="arjun.png" alt="Arjun Chatterjee" class="about-photo">
+      </div>
       <p class="hero-bio">I analyse AI companies at the intersection of deep learning research and venture capital, evaluating technical moats, market dynamics, and investment theses across the AI stack.</p>
       <div class="hero-cta">
         <a href="#" class="btn btn-primary" onclick="showPage('research')">Read my work</a>
@@ -637,9 +657,6 @@
       </div>
     </div>
     <div class="hero-right">
-      <div class="about-photo-wrap">
-        <img src="arjun.png" alt="Arjun Chatterjee" class="about-photo">
-      </div>
       <p class="hero-stat-label">Topics I cover</p>
       <div class="hero-topics">
         <div class="topic-row">
