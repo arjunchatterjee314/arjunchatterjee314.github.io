@@ -489,34 +489,43 @@
       .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 48px; }
       .article-item { grid-template-columns: 1fr; gap: 8px; }
       footer { flex-direction: column; gap: 12px; text-align: center; padding: 32px 24px; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-left {
+        padding: 60px 24px;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        align-items: center;
+        text-align: center;
+      }
+      .hero-right { padding: 40px 24px; }
+    
+      .hero-eyebrow { text-align: center; }
+    
       .hero-name-row {
         flex-direction: column;
         align-items: center;
         gap: 20px;
         margin-bottom: 28px;
+        width: 100%;
+      }
+    
+      .hero-name {
+        text-align: center;
+        width: 100%;
       }
     
       .about-photo {
         width: 160px;
         height: 190px;
         margin-bottom: 0;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
       }
     
-      .hero-eyebrow {
-        text-align: center;
-      }
+      .hero-bio { text-align: center; }
     
-      .hero-name {
-        text-align: center;
-      }
-    
-      .hero-bio {
-        text-align: center;
-      }
-    
-      .hero-cta {
-        justify-content: center;
-      }
+      .hero-cta { justify-content: center; }
     }
     
       .hero-name {
